@@ -26,6 +26,9 @@ export class Light {
     @Column()
     memory: string;
 
+    @Column({nullable: true})
+    voltage: string;
+
     @Column()
     x: number;
 
