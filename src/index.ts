@@ -1,5 +1,6 @@
 import * as dotenv        from "dotenv";
 import * as express       from "express";
+import * as helmet        from "helmet";
 import {createConnection} from "typeorm";
 import Logger from "./lib/logger";
 import morganMiddleware from "./config/morganMiddleWare";
@@ -18,7 +19,7 @@ const start = async ()=> {
 
   const app = express();
   app.use(morganMiddleware);
-
+  app.use(helmet());
   app.get("/logger", (_, res) => {
     Logger.error("This is an error log");
     Logger.warn("This is a warn log");
