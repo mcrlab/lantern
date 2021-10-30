@@ -1,40 +1,59 @@
-import dotenv from "dotenv";
-import express from "express";
+import * as dotenv        from "dotenv";
+import * as express       from "express";
+import {createConnection} from "typeorm";
+import Logger from "./lib/logger";
+import morganMiddleware from "./config/morganMiddleWare";
+import mqttRouter from "./routes/mqtt";
+import lightRouter from "./routes/light";
+import broker from "./lib/mqtt";
 
-dotenv.config();
-const port = process.env.SERVER_PORT;
-import * as routes from "./routes";
+const handleMessage = (topic: string, message: string) => {
+  Logger.debug(topic);
+  Logger.debug(message);
 
+  const data = JSON.parse(message);
 
-interface User {
-  name: string;
-  id: number
-};
+    try {
+      switch(topic){
+        case "connect":
+          return;
+        case "ping":
+           return;
+        default:
+          return;
+      }
 
-class UserAccount {
-  name: string;
-  id: number;
-  cheese: string;
-
-  constructor(name: string, id: number) {
-    this.name = name;
-    this.id = id;
-    this.cheese = "Gouder";
-  }
+    } catch (error) {
+      Logger.error(error);
+    }
 }
 
-const user1: User = new UserAccount("James", 5);
+const start = async ()=> {
+  dotenv.config();
+  const port = process.env.SERVER_PORT;
 
-const user2: User ={
-  name: "James",
-  id: 3,
-};
+  await createConnection();
+  await broker.init(handleMessage);
 
-const app = express();
+  const app = express();
+  app.use(morganMiddleware);
 
-routes.register( app );
+  app.get("/logger", (_, res) => {
+    Logger.error("This is an error log");
+    Logger.warn("This is a warn log");
+    Logger.info("This is a info log");
+    Logger.http("This is a http log");
+    Logger.debug("This is a debug log");
 
-app.listen( port, () => {
-  // tslint:disable-next-line:no-console
-  console.log( `server started at http://localhost:${ port }` );
-} );
+    res.send("Hello world");
+  });
+
+  app.use("/mqtt", mqttRouter);
+  app.use("/lights", lightRouter);
+
+  app.listen( port, () => {
+    Logger.debug( `server started at http://localhost:${ port }` );
+  } );
+}
+
+start();
