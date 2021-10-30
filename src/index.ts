@@ -5,6 +5,7 @@ import Logger from "./lib/logger";
 import morganMiddleware from "./config/morganMiddleWare";
 import mqttRouter from "./routes/mqtt";
 import lightRouter from "./routes/light";
+import colorRouter from "./routes/color";
 import broker from "./lib/mqtt";
 import { handleMessage } from "./lib/messageHandler";
 
@@ -30,7 +31,7 @@ const start = async ()=> {
 
   app.use("/mqtt", mqttRouter);
   app.use("/lights", lightRouter);
-
+  app.use("/colors", colorRouter);
   app.listen( port, () => {
     Logger.debug( `server started at http://localhost:${ port }` );
   } );
