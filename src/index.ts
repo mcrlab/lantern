@@ -6,27 +6,7 @@ import morganMiddleware from "./config/morganMiddleWare";
 import mqttRouter from "./routes/mqtt";
 import lightRouter from "./routes/light";
 import broker from "./lib/mqtt";
-
-const handleMessage = (topic: string, message: string) => {
-  Logger.debug(topic);
-  Logger.debug(message);
-
-  const data = JSON.parse(message);
-
-    try {
-      switch(topic){
-        case "connect":
-          return;
-        case "ping":
-           return;
-        default:
-          return;
-      }
-
-    } catch (error) {
-      Logger.error(error);
-    }
-}
+import { handleMessage } from "./lib/messageHandler";
 
 const start = async ()=> {
   dotenv.config();
