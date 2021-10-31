@@ -7,6 +7,8 @@ import morganMiddleware from "./config/morganMiddleWare";
 import mqttRouter from "./routes/mqtt";
 import lightRouter from "./routes/light";
 import colorRouter from "./routes/color";
+import easingRouter from "./routes/easing";
+
 import broker from "./lib/mqtt";
 import { handleMessage } from "./lib/messageHandler";
 
@@ -33,6 +35,7 @@ const start = async ()=> {
   app.use("/mqtt", mqttRouter);
   app.use("/lights", lightRouter);
   app.use("/colors", colorRouter);
+  app.use("/easings", easingRouter);
   app.listen( port, () => {
     Logger.debug( `server started at http://localhost:${ port }` );
   } );
