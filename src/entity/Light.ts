@@ -29,11 +29,11 @@ export class Light {
     @Column({nullable: true})
     voltage: string;
 
-    @Column()
-    x: number;
+    @Column({"type": "float"})
+    x: number = 0.0;
 
-    @Column()
-    y: number;
+    @Column({"type": "float"})
+    y: number = 0.0;
 
     @Column()
     sleep: number;

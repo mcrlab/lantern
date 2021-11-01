@@ -20,8 +20,10 @@ const start = async ()=> {
   await broker.init(handleMessage);
 
   const app = express();
+
   app.use(morganMiddleware);
   app.use(helmet());
+  app.use(express.json());
   app.get("/logger", (_, res) => {
     Logger.error("This is an error log");
     Logger.warn("This is a warn log");
