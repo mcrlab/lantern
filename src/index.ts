@@ -9,6 +9,7 @@ import lightRouter from "./routes/light";
 import colorRouter from "./routes/color";
 import easingRouter from "./routes/easing";
 import renderingRouter from "./routes/rendering";
+import rainbowRouter from "./routes/rainbow";
 import broker from "./lib/mqtt";
 import { handleMessage } from "./lib/messageHandler";
 import * as http from 'http';
@@ -42,6 +43,7 @@ const start = async ()=> {
   app.use("/colors", colorRouter);
   app.use("/easings", easingRouter);
   app.use("/renderings", renderingRouter);
+  app.use("/rainbow", rainbowRouter);
 
   const server = http.createServer(app);
   const wss = new WebSocket.Server({ server });
