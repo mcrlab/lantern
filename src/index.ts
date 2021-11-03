@@ -1,7 +1,7 @@
 import * as dotenv        from "dotenv";
 import * as express       from "express";
 import * as helmet        from "helmet";
-import {createConnection} from "typeorm";
+import {createConnection, getRepository} from "typeorm";
 import Logger from "./lib/logger";
 import morganMiddleware from "./config/morganMiddleWare";
 import mqttRouter from "./routes/mqtt";
@@ -11,6 +11,9 @@ import easingRouter from "./routes/easing";
 import renderingRouter from "./routes/rendering";
 import broker from "./lib/mqtt";
 import { handleMessage } from "./lib/messageHandler";
+import * as http from 'http';
+import { WebSocket } from 'ws';
+import { Light } from "./entity/Light";
 
 const start = async ()=> {
   dotenv.config();
@@ -40,9 +43,36 @@ const start = async ()=> {
   app.use("/easings", easingRouter);
   app.use("/renderings", renderingRouter);
 
-  app.listen( port, () => {
-    Logger.debug( `server started at http://localhost:${ port }` );
-  } );
+  const server = http.createServer(app);
+  const wss = new WebSocket.Server({ server });
+
+  wss.on('connection', async (ws) => {
+    const data = await getRepository(Light).find();
+    ws.send(JSON.stringify(
+      {
+        "instruction": "ALL_LIGHTS",
+        "data": { "lights": data }
+      }
+    ));
+
+    // lightController.registerCallback((instruction, data)=>{
+    //   wss.clients.forEach(function each(client) {
+    //     if (client.readyState === WebSocket.OPEN) {
+    //       client.send(JSON.stringify(
+    //         {
+    //           "instruction": instruction,
+    //           "data": data
+    //         }
+    //       ));
+    //     }
+    //   });
+    // });
+
+  });
+
+  server.listen(port || '3001', () => {
+    Logger.debug( `server started at on port ${ port }` );
+  });
 }
 
 start();
