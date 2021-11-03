@@ -1,6 +1,7 @@
 // address, color, version, platform, memory, x, y, sleep, last_updated, config;
 
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm";
+import { LightInstruction } from "./LightInstruction";
 
 @Entity()
 export class Light {
@@ -44,6 +45,8 @@ export class Light {
     @Column("json")
     config: {};
 
+    @OneToMany(() => LightInstruction, instruction => instruction.light)
+    instructions: LightInstruction[];
 
 
 }

@@ -8,7 +8,7 @@ import mqttRouter from "./routes/mqtt";
 import lightRouter from "./routes/light";
 import colorRouter from "./routes/color";
 import easingRouter from "./routes/easing";
-
+import renderingRouter from "./routes/rendering";
 import broker from "./lib/mqtt";
 import { handleMessage } from "./lib/messageHandler";
 
@@ -38,6 +38,8 @@ const start = async ()=> {
   app.use("/lights", lightRouter);
   app.use("/colors", colorRouter);
   app.use("/easings", easingRouter);
+  app.use("/renderings", renderingRouter);
+
   app.listen( port, () => {
     Logger.debug( `server started at http://localhost:${ port }` );
   } );

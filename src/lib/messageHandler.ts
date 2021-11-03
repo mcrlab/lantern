@@ -11,13 +11,11 @@ export const handleMessage = async (topic: string, message: string) => {
         switch(topic){
           case "connect":
             if(light){
-                Logger.debug("light found");
                 light.lastUpdated = new Date();
                 light.config = data.config || light.config;
                 await getRepository(Light).save(light);
-
+                Logger.debug(`Light ${light.address} connected`);
               } else {
-                Logger.debug("New light created");
                 const newLight = new Light();
                 newLight.name = "Light";
                 newLight.address = data.id;
@@ -31,16 +29,16 @@ export const handleMessage = async (topic: string, message: string) => {
                 newLight.memory = data.memory || "-1";
                 newLight.lastUpdated = new Date();
                 await getRepository(Light).save(newLight);
+                Logger.debug("New light created");
               }
             return;
           case "ping":
             if(light){
-                Logger.debug("light found");
                 light.lastUpdated = new Date();
                 light.color = data.color;
                 light.voltage = data.voltage;
                 await getRepository(Light).save(light);
-
+                Logger.debug(`Light ${light.address} pinged`);
               }
           default:
             return;

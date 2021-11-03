@@ -48,7 +48,7 @@ class MQTTBroker {
   }
 
   publish(address: string, message: string) {
-    Logger.debug(address, message);
+    Logger.debug(`${address} ${message}`);
     this.client.publish(address, message);
   }
 

@@ -1,9 +1,11 @@
 import * as express from "express";
 import {Request, Response} from 'express';
 import "reflect-metadata";
-import {getRepository} from "typeorm";
-import {Light} from "../entity/Light";
+import { getRepository } from "typeorm";
+import { Light } from "../entity/Light";
 import { LightInstruction } from "../entity/LightInstruction";
+import { Rendering } from "../entity/Rendering";
+import broker from "../lib/mqtt";
 
 import Logger from "../lib/logger";
 
@@ -12,33 +14,77 @@ const lightRouter = express.Router()
     const lights = await getRepository(Light).find();
     res.json(lights);
 })
+.post('/', async (req: Request, res: Response) => {
+    try {
+        const color        = req.body.color;
+        const time:number  = parseInt(req.body.time, 10);
+        const delay:number = parseInt(req.body.delay, 10);
+        const easing       = req.body.easing || "LinearInterpolation";
+        const lights       = await getRepository(Light).find();
+
+        for(const light of lights){
+            const instruction = new LightInstruction();
+            instruction.light = light;
+            instruction.color = color;
+            instruction.time = time;
+            instruction.delay = delay;
+            instruction.easing = easing;
+
+            if(process.env.QUEUE_ENABLED){
+                await getRepository(LightInstruction).save(instruction);
+                const rendering = new Rendering();
+                rendering.complete     = false;
+                rendering.lastUpdated  = new Date();
+                rendering.instructions = [instruction];
+                await getRepository(Rendering).save(rendering);
+            } else {
+                delete instruction.light;
+                broker.publish(`color/${light.address}`, JSON.stringify(instruction));
+            }
+        }
+        return res.json({});
+
+      } catch(error){
+          Logger.error(error);
+          res.status(error.status|| 400).json(error);
+      };
+})
 .get("/:lightID", async (req: Request, res: Response) => {
     const light = await getRepository(Light).findOne(req.params.lightID);
     res.json(light);
 })
 .post("/:lightID", async (req: Request, res: Response) => {
-    try {
-        const color  = req.body.color;
-        const easing = req.body.easing || "LinearInterpolation";
-        const time   = req.body.time;
-        const delay  = req.body.delay;
 
-        const light = await getRepository(Light).findOne(req.params.lightID);
+    const color  = req.body.color;
+    const easing = req.body.easing || "LinearInterpolation";
+    const time   = req.body.time;
+    const delay  = req.body.delay;
 
-        const instruction = new LightInstruction();
+    const light = await getRepository(Light).findOne(req.params.lightID);
 
-        instruction.light  = light;
-        instruction.color  = color;
-        instruction.easing = easing;
-        instruction.delay  = delay;
-        instruction.time   = time;
+    const instruction = new LightInstruction();
 
+    instruction.light  = light;
+    instruction.color  = color;
+    instruction.easing = easing;
+    instruction.delay  = delay;
+    instruction.time   = time;
+
+    if(process.env.QUEUE_ENABLED){
         await getRepository(LightInstruction).save(instruction);
 
-        res.json({});
-    } catch (e){
-        
+        const rendering = new Rendering();
+        rendering.complete     = false;
+        rendering.lastUpdated  = new Date();
+        rendering.instructions = [instruction];
+        await getRepository(Rendering).save(rendering);
+    } else {
+        delete instruction.light;
+        broker.publish(`color/${light.address}`, JSON.stringify(instruction));
     }
+
+    res.json({});
+
 })
 .post("/:lightID/position", async(req: Request, res: Response) => {
     Logger.debug("Update light position");
@@ -49,39 +95,57 @@ const lightRouter = express.Router()
         light.x = x || 0;
         light.y = y || 0;
         await getRepository(Light).save(light);
-        res.send("Success");
+        res.json({});
     } else {
         res.status(404).send("Light not found!")
     }
 })
 .post("/:lightID/update", async (req: Request, res: Response) => {
-    Logger.warn("Update light firmware");
-    res.send("to be implemented");
-
-    // update firmware
+    Logger.debug("Update light firmware");
+    const light = await getRepository(Light).findOne(req.params.lightID);
+    if(light){
+        broker.publish(`update/${light.address}`, "{}");
+        res.send({});
+    } else {
+        res.status(404).send("Light not found!")
+    }
 })
 .post("/:lightID/sleep", async (req: Request, res: Response) => {
     Logger.debug("Update light sleep length");
     const light = await getRepository(Light).findOne(req.params.lightID);
+    const seconds = parseInt(req.body.seconds, 10);
     if(light){
-        light.sleep = parseInt(req.body.seconds, 10);
+        light.sleep = seconds;
         await getRepository(Light).save(light);
-        res.send("Success");
+        const data = {
+            "seconds": seconds
+        }
+        broker.publish(`sleep/${light.address}`,JSON.stringify(data));
+        res.send({});
     } else {
         res.status(404).send("Light not found!")
     }
 })
 .post("/:lightID/restart", async (req: Request, res: Response) => {
-    Logger.warn("Restart light");
-
-    res.send("to be implemented");
-    // restart
+    Logger.debug("Restart light");
+    const light = await getRepository(Light).findOne(req.params.lightID);
+    if(light){
+        broker.publish(`restart/${light.address}`, "{}");
+        res.send({});
+    } else {
+        res.status(404).send("Light not found!")
+    }
 })
 .post("/:lightID/config", async (req: Request, res: Response) => {
-    Logger.warn("Update light config");
-
-    res.send("to be implemented");
-    // update config
+    Logger.debug("Update light config");
+    const light = await getRepository(Light).findOne(req.params.lightID);
+    const config = req.body;
+    if(light){
+        broker.publish(`config/${light.address}`, JSON.stringify(config));
+        res.send({});
+    } else {
+        res.status(404).send("Light not found!")
+    }
 })
 .post("/:lightID/delete", async (req: Request, res: Response) => {
     Logger.debug("Delete light");
