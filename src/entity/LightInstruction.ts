@@ -2,7 +2,7 @@
 
 import {Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne} from "typeorm";
 import { Light } from "./Light";
-import { Rendering } from "./Rendering";
+import { Frame } from "./Frame";
 
 @Entity()
 export class LightInstruction {
@@ -28,6 +28,6 @@ export class LightInstruction {
     @JoinColumn()
     light: Light;
 
-    @ManyToOne(() => Rendering, rendering => rendering.instructions)
-    rendering: Rendering
+    @ManyToOne(() => Frame, frame => frame.instructions)
+    frame: Frame
 }

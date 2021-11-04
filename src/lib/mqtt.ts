@@ -54,6 +54,5 @@ class MQTTBroker {
 
 }
 
-
 const broker = new MQTTBroker("api");
 export default broker;

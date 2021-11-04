@@ -4,7 +4,7 @@ import "reflect-metadata";
 import { getRepository } from "typeorm";
 import { Light } from "../entity/Light";
 import { LightInstruction } from "../entity/LightInstruction";
-import { Rendering } from "../entity/Rendering";
+import { Frame } from "../entity/Frame";
 import broker from "../lib/mqtt";
 
 import Logger from "../lib/logger";
@@ -31,12 +31,14 @@ const lightRouter = express.Router()
             instruction.easing = easing;
 
             if(process.env.QUEUE_ENABLED){
+                const frame = new Frame();
+                frame.complete     = false;
+                frame.created      = new Date();
+                await getRepository(Frame).save(frame);
+
+                instruction.frame = frame;
                 await getRepository(LightInstruction).save(instruction);
-                const rendering = new Rendering();
-                rendering.complete     = false;
-                rendering.lastUpdated  = new Date();
-                rendering.instructions = [instruction];
-                await getRepository(Rendering).save(rendering);
+
             } else {
                 delete instruction.light;
                 broker.publish(`color/${light.address}`, JSON.stringify(instruction));
@@ -71,13 +73,12 @@ const lightRouter = express.Router()
     instruction.time   = time;
 
     if(process.env.QUEUE_ENABLED){
+        const frame = new Frame();
+        frame.complete     = false;
+        frame.created      = new Date();
+        await getRepository(Frame).save(frame);
+        instruction.frame = frame;
         await getRepository(LightInstruction).save(instruction);
-
-        const rendering = new Rendering();
-        rendering.complete     = false;
-        rendering.lastUpdated  = new Date();
-        rendering.instructions = [instruction];
-        await getRepository(Rendering).save(rendering);
     } else {
         delete instruction.light;
         broker.publish(`color/${light.address}`, JSON.stringify(instruction));

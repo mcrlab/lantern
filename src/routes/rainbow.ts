@@ -1,7 +1,7 @@
 import { getRepository } from "typeorm";
 import { Light } from "../entity/Light";
 import { LightInstruction } from "../entity/LightInstruction";
-import { Rendering } from "../entity/Rendering";
+import { Frame } from "../entity/Frame";
 import broker from "../lib/mqtt";
 
 import * as express from "express";
@@ -61,9 +61,15 @@ const rainbowRouter = express.Router()
         const delay =  req.body.delay;
         const easing = req.body.easing || "LinearInterpolation";
 
-        const instructions = [];
-
         const numberOfLights = lights.length;
+
+        const frame        = new Frame();
+        frame.complete     = false;
+        frame.created      = new Date();
+
+        if(process.env.QUEUE_ENABLED){
+            await getRepository(Frame).save(frame);
+        }
 
         lights.map(async(light, index)=>{
 
@@ -77,20 +83,14 @@ const rainbowRouter = express.Router()
             instruction.delay = delay;
 
             if(process.env.QUEUE_ENABLED){
+                instruction.frame = frame;
                 await getRepository(LightInstruction).save(instruction);
-                instructions.push(instruction);
             } else {
                 delete instruction.light;
                 broker.publish(`color/${light.address}`, JSON.stringify(instruction));
             }
         });
-        if(process.env.QUEUE_ENABLED){
-            const rendering          = new Rendering();
-            rendering.complete     = false;
-            rendering.lastUpdated  = new Date();
-            rendering.instructions = instructions;
-            await getRepository(Rendering).save(rendering);
-        }
+
         res.json({});
     } catch(error){
         Logger.error(error);

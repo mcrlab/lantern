@@ -4,12 +4,12 @@ import "reflect-metadata";
 import {getRepository} from "typeorm";
 import { Light } from "../entity/Light";
 import { LightInstruction } from "../entity/LightInstruction";
-import {Rendering} from "../entity/Rendering";
+import {Frame} from "../entity/Frame";
 import Logger from "../lib/logger";
 import broker from "../lib/mqtt";
-const renderingRouter = express.Router()
+const frameRouter = express.Router()
 .get('/', async (req: Request, res: Response) => {
-    const data = await getRepository(Rendering).find();
+    const data = await getRepository(Frame).find();
     res.json(data);
 })
 .post('/', async (req, res) => {
@@ -44,11 +44,11 @@ const renderingRouter = express.Router()
         });
 
         if(process.env.QUEUE_ENABLED){
-            const rendering          = new Rendering();
-            rendering.complete     = false;
-            rendering.lastUpdated  = new Date();
-            rendering.instructions = instructions;
-            await getRepository(Rendering).save(rendering);
+            const frame        = new Frame();
+            frame.complete     = false;
+            frame.created      = new Date();
+            frame.instructions = instructions;
+            await getRepository(Frame).save(frame);
         }
 
 
@@ -65,8 +65,13 @@ const renderingRouter = express.Router()
 
         const lights = await getRepository(Light).find();
 
-        const instructions = [];
+        const frame        = new Frame();
+        frame.complete     = false;
+        frame.created      = new Date();
 
+        if(process.env.QUEUE_ENABLED){
+            await getRepository(Frame).save(frame);
+        }
         updates.map(async (update:any, i:number)=> {
             const light = lights.find((element)=> { return element.id === update.id});
             const instruction = new LightInstruction();
@@ -77,8 +82,8 @@ const renderingRouter = express.Router()
             instruction.delay = update.delay || 0;
 
             if(process.env.QUEUE_ENABLED){
+                instruction.frame = frame;
                 await getRepository(LightInstruction).save(instruction);
-                instructions.push(instruction);
             } else {
                 delete instruction.light;
                 broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
@@ -86,13 +91,6 @@ const renderingRouter = express.Router()
 
         });
 
-        if(process.env.QUEUE_ENABLED){
-            const rendering          = new Rendering();
-            rendering.complete     = false;
-            rendering.lastUpdated  = new Date();
-            rendering.instructions = instructions;
-            await getRepository(Rendering).save(rendering);
-        }
 
         return res.json({});
 
@@ -103,5 +101,5 @@ const renderingRouter = express.Router()
 });
 
 
-export default renderingRouter;
+export default frameRouter;
 

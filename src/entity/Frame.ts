@@ -2,7 +2,7 @@ import {Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn} from "typ
 import { LightInstruction } from "./LightInstruction";
 
 @Entity()
-export class Rendering {
+export class Frame {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -11,9 +11,9 @@ export class Rendering {
     complete: boolean;
 
     @Column()
-    lastUpdated: Date;
+    created: Date;
 
-    @OneToMany(() => LightInstruction, instruction => instruction.rendering, {
+    @OneToMany(() => LightInstruction, instruction => instruction.frame, {
         cascade: true
     })
     @JoinColumn()
