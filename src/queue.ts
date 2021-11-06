@@ -15,10 +15,10 @@ async function getNextInstruction(){
     if(nextFrame){
         const instructions = await getRepository(LightInstruction)
                                     .createQueryBuilder("instruction")
-                                    .select(["instruction.color", 
-                                            "instruction.time", 
-                                            "instruction.easing", 
-                                            "instruction.delay", 
+                                    .select(["instruction.color",
+                                            "instruction.time",
+                                            "instruction.easing",
+                                            "instruction.delay",
                                             "light.address"])
                                     .leftJoin('instruction.light', "light")
                                     .where("instruction.frameId = :id", { id: nextFrame.id})

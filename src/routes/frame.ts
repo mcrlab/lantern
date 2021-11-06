@@ -21,7 +21,15 @@ const frameRouter = express.Router()
         const time   = 10;
         const delay  = 10;
         const easing = req.body.easing || "LinearInterpolation";
-        const instructions = [];
+        const frame        = new Frame();
+        frame.complete     = false;
+        frame.created      = new Date();
+        frame.wait         = 0;
+
+        if(process.env.QUEUE_ENABLED){
+            await getRepository(Frame).save(frame);
+        }
+
         colors.map(async (color:string, i:number)=> {
             if(lights[i]){
                 const instruction = new LightInstruction();
@@ -32,8 +40,10 @@ const frameRouter = express.Router()
                 instruction.delay = delay;
 
                 if(process.env.QUEUE_ENABLED){
+                    instruction.frame = frame;
                     await getRepository(LightInstruction).save(instruction);
-                    instructions.push(instruction);
+                    frame.wait = (time + delay)
+                    await getRepository(Frame).save(frame);
                 } else {
                     delete instruction.light;
                     broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
@@ -42,15 +52,6 @@ const frameRouter = express.Router()
                 return;
             }
         });
-
-        if(process.env.QUEUE_ENABLED){
-            const frame        = new Frame();
-            frame.complete     = false;
-            frame.created      = new Date();
-            frame.instructions = instructions;
-            await getRepository(Frame).save(frame);
-        }
-
 
         return res.json({});
 
@@ -67,6 +68,7 @@ const frameRouter = express.Router()
 
         const frame        = new Frame();
         frame.complete     = false;
+        frame.wait         = 0;
         frame.created      = new Date();
 
         if(process.env.QUEUE_ENABLED){
@@ -84,6 +86,8 @@ const frameRouter = express.Router()
             if(process.env.QUEUE_ENABLED){
                 instruction.frame = frame;
                 await getRepository(LightInstruction).save(instruction);
+                frame.wait = (instruction.time + instruction.delay)
+                await getRepository(Frame).save(frame);
             } else {
                 delete instruction.light;
                 broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));

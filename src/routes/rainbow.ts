@@ -65,6 +65,7 @@ const rainbowRouter = express.Router()
 
         const frame        = new Frame();
         frame.complete     = false;
+        frame.wait         = 0;
         frame.created      = new Date();
 
         if(process.env.QUEUE_ENABLED){

@@ -8,6 +8,9 @@ export class Frame {
     id: number;
 
     @Column()
+    wait: number;
+
+    @Column()
     complete: boolean;
 
     @Column()
