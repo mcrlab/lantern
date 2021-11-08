@@ -1,16 +1,53 @@
 {
+   "version": "2.4.2",
    "compilerOptions": {
-      "lib": [
-         "es5",
-         "es6"
-      ],
-      "target": "es5",
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "outDir": "./build",
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "sourceMap": true,
-      "skipLibCheck": true
-   }
+       "lib": ["es5", "es6", "es2018"],
+       "target": "es6",
+       "module": "commonjs",
+       "moduleResolution": "node",
+       "emitDecoratorMetadata": true,
+       "experimentalDecorators": true,
+       "outDir": "./dist",
+       "sourceMap": true,
+       "skipLibCheck": true
+   },
+   "exclude": [
+       "node_modules"
+   ]
 }
+
+
+// {
+//    "compilerOptions": {
+//      "lib": ["es5", "es6", "dom"],
+//      "target": "es5",
+//      "module": "commonjs",
+//      "moduleResolution": "node",
+//      "emitDecoratorMetadata": true,
+//      "experimentalDecorators": true,
+//      "skipLibCheck": true,
+//      "strictPropertyInitialization": false,
+//      "outDir": "./dist",
+//      "allowSyntheticDefaultImports": true,
+//      "esModuleInterop": true
+//    },
+//    "include": ["src/**/*"],
+//    "exclude": ["node_modules", "**/*.spec.ts"]
+//  }
+
+//  {
+//    "compilerOptions": {
+//       "lib": [
+//          "es5",
+//          "es6"
+//       ],
+//       "target": "es5",
+//       "module": "commonjs",
+//       "moduleResolution": "node",
+//       "outDir": "./build",
+//       "emitDecoratorMetadata": true,
+//       "experimentalDecorators": true,
+//       "sourceMap": true,
+//       "skipLibCheck": true
+//    }
+// }

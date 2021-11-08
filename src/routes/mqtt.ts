@@ -4,7 +4,7 @@ import "reflect-metadata";
 import {getRepository} from "typeorm";
 import {MQTTUser} from "../entity/MQTTUser";
 import Logger from "../lib/logger";
-import * as pbkdf2 from 'pbkdf2';
+import * as pbkdf2  from 'pbkdf2';
 
 const mySalt = "mysecretsalthere";
 

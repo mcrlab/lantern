@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import * as dotenv        from "dotenv";
 import * as express       from "express";
 import * as helmet        from "helmet";
@@ -19,7 +20,7 @@ import debugRouter from "./routes/debug";
 
 const start = async ()=> {
   dotenv.config();
-  const port = process.env.SERVER_PORT;
+  const port = process.env.SERVER_PORT || '3001';
 
   await createConnection();
   await broker.init(handleMessage);
@@ -74,8 +75,8 @@ const start = async ()=> {
 
   });
 
-  server.listen(port || '3001', () => {
-    Logger.debug( `server started at on port ${ port }` );
+  server.listen(port, () => {
+    Logger.debug( `Web server started at on port ${ port }` );
   });
 }
 

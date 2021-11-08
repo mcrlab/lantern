@@ -45,7 +45,7 @@ const frameRouter = express.Router()
                     frame.wait = (time + delay)
                     await getRepository(Frame).save(frame);
                 } else {
-                    delete instruction.light;
+                    // delete instruction.light;
                     broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
                 }
             } else {
@@ -57,7 +57,7 @@ const frameRouter = express.Router()
 
     } catch(error){
         Logger.error(error);
-        res.status(error.status|| 400).json(error || "Oops something went wrong");
+        res.status(400).json(error || "Oops something went wrong");
     };
 })
 .post("/all", async (req: Request, res: Response)=> {
@@ -76,21 +76,23 @@ const frameRouter = express.Router()
         }
         updates.map(async (update:any, i:number)=> {
             const light = lights.find((element)=> { return element.id === update.id});
-            const instruction = new LightInstruction();
-            instruction.light = light;
-            instruction.color = update.color;
-            instruction.easing = update.easing || "LinearInterpolation";
-            instruction.time = update.time || 0;
-            instruction.delay = update.delay || 0;
+            if(light){
+                const instruction = new LightInstruction();
+                instruction.light = light;
+                instruction.color = update.color;
+                instruction.easing = update.easing || "LinearInterpolation";
+                instruction.time = update.time || 0;
+                instruction.delay = update.delay || 0;
 
-            if(process.env.QUEUE_ENABLED){
-                instruction.frame = frame;
-                await getRepository(LightInstruction).save(instruction);
-                frame.wait = (instruction.time + instruction.delay)
-                await getRepository(Frame).save(frame);
-            } else {
-                delete instruction.light;
-                broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
+                if(process.env.QUEUE_ENABLED){
+                    instruction.frame = frame;
+                    await getRepository(LightInstruction).save(instruction);
+                    frame.wait = (instruction.time + instruction.delay)
+                    await getRepository(Frame).save(frame);
+                } else {
+                    // delete instruction.light;
+                    broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
+                }
             }
 
         });
@@ -100,7 +102,7 @@ const frameRouter = express.Router()
 
     } catch(error){
         Logger.error(error);
-        res.status(error.status|| 400).json(error || "Oops something went wrong");
+        res.status(400).json(error || "Oops something went wrong");
     };
 });
 

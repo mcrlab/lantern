@@ -35,6 +35,8 @@ export const register =  (app: express.Application) => {
     app.delete( "/api/:user" , async (req: Request, res: Response ) => {
         const id = req.params.user;
         const user = await getRepository(User).findOne(id);
-        await getRepository(User).remove(user);
+        if(user){
+            await getRepository(User).remove(user);
+        }
     });
 }

@@ -8,7 +8,7 @@ import * as express from "express";
 import {Request, Response} from 'express';
 import Logger from "../lib/logger";
 
-function intToHex(color){
+function intToHex(color: any){
     let char = color.toString(16);
     if(char.length === 1){
       char = "0"+char;
@@ -16,7 +16,7 @@ function intToHex(color){
     return char.toUpperCase();
   }
 
-function RGBObjectToHex(colorObject){
+function RGBObjectToHex(colorObject: any){
     const hex = [];
     hex.push(intToHex(colorObject.r));
     hex.push(intToHex(colorObject.g));
@@ -87,7 +87,7 @@ const rainbowRouter = express.Router()
                 instruction.frame = frame;
                 await getRepository(LightInstruction).save(instruction);
             } else {
-                delete instruction.light;
+                // delete instruction.light;
                 broker.publish(`color/${light.address}`, JSON.stringify(instruction));
             }
         });
@@ -95,7 +95,7 @@ const rainbowRouter = express.Router()
         res.json({});
     } catch(error){
         Logger.error(error);
-        res.status(error.status|| 400).json(error);
+        res.status(400).json(error);
     };
 });
 

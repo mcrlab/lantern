@@ -12,9 +12,8 @@ class MQTTBroker {
     this.clientId = clientId;
   }
 
-  async init(callback) {
+  async init(callback: any) {
     const url = process.env.MQTT_URL;
-    Logger.debug(`MQTT_URL: ${process.env.MQTT_URL}`);
     this.client  = await mqtt.connect(url, {"clientId": this.clientId});
 
     this.client.on('connect', () => {

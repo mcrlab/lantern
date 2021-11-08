@@ -41,7 +41,7 @@ const lightRouter = express.Router()
                 await getRepository(LightInstruction).save(instruction);
 
             } else {
-                delete instruction.light;
+                // delete instruction.light;
                 broker.publish(`color/${light.address}`, JSON.stringify(instruction));
             }
         }
@@ -49,7 +49,7 @@ const lightRouter = express.Router()
 
       } catch(error){
           Logger.error(error);
-          res.status(error.status|| 400).json(error);
+          res.status(400).json(error);
       };
 })
 .get("/:lightID", async (req: Request, res: Response) => {
@@ -64,28 +64,28 @@ const lightRouter = express.Router()
     const delay  = req.body.delay;
 
     const light = await getRepository(Light).findOne(req.params.lightID);
+    if(light){
+        const instruction = new LightInstruction();
 
-    const instruction = new LightInstruction();
+        instruction.light  = light;
+        instruction.color  = color;
+        instruction.easing = easing;
+        instruction.delay  = delay;
+        instruction.time   = time;
 
-    instruction.light  = light;
-    instruction.color  = color;
-    instruction.easing = easing;
-    instruction.delay  = delay;
-    instruction.time   = time;
-
-    if(process.env.QUEUE_ENABLED){
-        const frame = new Frame();
-        frame.complete     = false;
-        frame.wait         = 0;
-        frame.created      = new Date();
-        await getRepository(Frame).save(frame);
-        instruction.frame = frame;
-        await getRepository(LightInstruction).save(instruction);
-    } else {
-        delete instruction.light;
-        broker.publish(`color/${light.address}`, JSON.stringify(instruction));
+        if(process.env.QUEUE_ENABLED){
+            const frame = new Frame();
+            frame.complete     = false;
+            frame.wait         = 0;
+            frame.created      = new Date();
+            await getRepository(Frame).save(frame);
+            instruction.frame = frame;
+            await getRepository(LightInstruction).save(instruction);
+        } else {
+            // delete instruction.light;
+            broker.publish(`color/${light.address}`, JSON.stringify(instruction));
+        }
     }
-
     res.json({});
 
 })
