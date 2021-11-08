@@ -8,15 +8,15 @@ import Logger from "../lib/logger";
 const colorRouter = express.Router()
 .get('/', async (req: Request, res: Response) => {
     const colors = await getRepository(Color).find();
-    res.json(colors);
+    res.json(colors); 
 })
 .post('/', async (req: Request, res: Response) => {
     const color = new Color();
-    color.name = "Blue";
-    color.hexcode = "0000FF";
+    color.name = req.body.name;
+    color.hexcode = req.body.hexcode;
     const data = await getRepository(Color).save(color);
-    res.json("Hello world");
-    Logger.debug(data);
+    res.json({});
+    Logger.debug("New colour added");
 });
 
 export default colorRouter;
