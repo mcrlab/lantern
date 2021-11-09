@@ -76,7 +76,7 @@ const start = async ()=> {
   });
 
   server.listen(port, () => {
-    Logger.debug( `Web server started at on port ${ port }` );
+    Logger.info( `Web server started` );
   });
 }
 

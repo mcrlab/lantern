@@ -6,12 +6,14 @@ import { Light } from "../entity/Light";
 import { LightInstruction } from "../entity/LightInstruction";
 import { Frame } from "../entity/Frame";
 import broker from "../lib/mqtt";
+import queue from '../lib/redis';
 
 import Logger from "../lib/logger";
 
 const lightRouter = express.Router()
 .get('/', async (req: Request, res: Response) => {
     const lights = await getRepository(Light).find();
+    Logger.info(queue.len());
     res.json(lights);
 })
 .post('/', async (req: Request, res: Response) => {

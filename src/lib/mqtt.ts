@@ -17,7 +17,7 @@ class MQTTBroker {
     this.client  = mqtt.connect(url, {"clientId": this.clientId});
 
     this.client.on('connect', () => {
-      Logger.debug("Connected to MQTT broker");
+      Logger.info("Connected to MQTT broker");
       this.client.subscribe('connect');
       this.client.subscribe('ping');
     });
