@@ -82,7 +82,7 @@ const lightRouter = express.Router()
             instruction.frame = frame;
             await getRepository(LightInstruction).save(instruction);
         } else {
-            // delete instruction.light;
+            delete instruction.light;
             broker.publish(`color/${light.address}`, JSON.stringify(instruction));
         }
     }

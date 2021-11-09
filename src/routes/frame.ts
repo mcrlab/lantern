@@ -45,7 +45,7 @@ const frameRouter = express.Router()
                     frame.wait = (time + delay)
                     await getRepository(Frame).save(frame);
                 } else {
-                    // delete instruction.light;
+                    delete instruction.light;
                     broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
                 }
             } else {
@@ -90,7 +90,7 @@ const frameRouter = express.Router()
                     frame.wait = (instruction.time + instruction.delay)
                     await getRepository(Frame).save(frame);
                 } else {
-                    // delete instruction.light;
+                    delete instruction.light;
                     broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
                 }
             }
