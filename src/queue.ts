@@ -45,9 +45,18 @@ async function getNextInstruction(){
     }
     setTimeout(getNextInstruction, wait);
 }
+
+function handleMessage(topic,message){};
+
 async function start(){
-    await createConnection();
-    getNextInstruction();
+    if(process.env.QUEUE_ENABLED){
+        await broker.init("Queue", handleMessage);
+        await createConnection();
+        getNextInstruction();
+    }  else {
+        Logger.info("DB Queue not enabled");
+        process.exit(1);
+    }
 }
 
 start();

@@ -23,7 +23,7 @@ const start = async ()=> {
   const port = process.env.SERVER_PORT || '3001';
 
   await createConnection();
-  await broker.init(handleMessage);
+  await broker.init("API", handleMessage);
 
   const app = express();
 

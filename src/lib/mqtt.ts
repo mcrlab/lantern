@@ -8,13 +8,13 @@ class MQTTBroker {
     clientId: string;
     client: mqtt.Client;
 
-  constructor(clientId: string){
-    this.clientId = clientId;
-  }
+  constructor(){}
 
-  async init(callback: any) {
+  async init(clientId: string, callback: any) {
+    
     const url = process.env.MQTT_URL;
-    this.client  = await mqtt.connect(url, {"clientId": this.clientId});
+    this.clientId = clientId;
+    this.client  = mqtt.connect(url, {"clientId": this.clientId});
 
     this.client.on('connect', () => {
       Logger.debug("Connected to MQTT broker");
@@ -53,5 +53,5 @@ class MQTTBroker {
 
 }
 
-const broker = new MQTTBroker("api");
+const broker = new MQTTBroker();
 export default broker;
