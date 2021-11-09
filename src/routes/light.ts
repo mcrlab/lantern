@@ -33,7 +33,7 @@ const lightRouter = express.Router()
             if(process.env.QUEUE_ENABLED){
                 const frame = new Frame();
                 frame.complete     = false;
-                frame.wait         = 0;
+                frame.wait         = time + delay;
                 frame.created      = new Date();
                 await getRepository(Frame).save(frame);
 
@@ -41,7 +41,7 @@ const lightRouter = express.Router()
                 await getRepository(LightInstruction).save(instruction);
 
             } else {
-                // delete instruction.light;
+                delete instruction.light;
                 broker.publish(`color/${light.address}`, JSON.stringify(instruction));
             }
         }
@@ -76,7 +76,7 @@ const lightRouter = express.Router()
         if(process.env.QUEUE_ENABLED){
             const frame = new Frame();
             frame.complete     = false;
-            frame.wait         = 0;
+            frame.wait         = time + delay;
             frame.created      = new Date();
             await getRepository(Frame).save(frame);
             instruction.frame = frame;

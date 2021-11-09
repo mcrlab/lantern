@@ -17,7 +17,7 @@ const frameRouter = express.Router()
         const colors = req.body.colors;
 
         const lights = await getRepository(Light).find();
-
+        let wait;
         const time   = 10;
         const delay  = 10;
         const easing = req.body.easing || "LinearInterpolation";
@@ -38,7 +38,9 @@ const frameRouter = express.Router()
                 instruction.easing = easing;
                 instruction.time = time;
                 instruction.delay = delay;
-
+                if(wait < (instruction.time + instruction.delay)){
+                    wait = instruction.time + instruction.delay;
+                }
                 if(process.env.QUEUE_ENABLED){
                     instruction.frame = frame;
                     await getRepository(LightInstruction).save(instruction);
@@ -52,7 +54,10 @@ const frameRouter = express.Router()
                 return;
             }
         });
-
+        if(process.env.QUEUE_ENABLED){
+            frame.wait = wait;
+            await getRepository(Frame).save(frame);
+        }
         return res.json({});
 
     } catch(error){
@@ -65,7 +70,7 @@ const frameRouter = express.Router()
         const updates = req.body.lights;
 
         const lights = await getRepository(Light).find();
-
+        let wait = 0;
         const frame        = new Frame();
         frame.complete     = false;
         frame.wait         = 0;
@@ -83,19 +88,22 @@ const frameRouter = express.Router()
                 instruction.easing = update.easing || "LinearInterpolation";
                 instruction.time = update.time || 0;
                 instruction.delay = update.delay || 0;
-
+                if(wait < (instruction.time + instruction.delay)){
+                    wait = instruction.time + instruction.delay;
+                }
                 if(process.env.QUEUE_ENABLED){
                     instruction.frame = frame;
                     await getRepository(LightInstruction).save(instruction);
-                    frame.wait = (instruction.time + instruction.delay)
-                    await getRepository(Frame).save(frame);
                 } else {
                     delete instruction.light;
                     broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
                 }
             }
-
         });
+        if(process.env.QUEUE_ENABLED){
+            frame.wait = wait;
+            await getRepository(Frame).save(frame);
+        }
 
 
         return res.json({});

@@ -57,15 +57,15 @@ const rainbowRouter = express.Router()
             return a.x - b.x
         });
 
-        const time =   req.body.time;
-        const delay =  req.body.delay;
+        const time =   req.body.time || 0;
+        const delay =  req.body.delay || 0;
         const easing = req.body.easing || "LinearInterpolation";
 
         const numberOfLights = lights.length;
 
         const frame        = new Frame();
         frame.complete     = false;
-        frame.wait         = 0;
+        frame.wait         = time + delay;
         frame.created      = new Date();
 
         if(process.env.QUEUE_ENABLED){

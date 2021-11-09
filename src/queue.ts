@@ -32,21 +32,20 @@ async function getNextInstruction(){
                 delay: instruction.instruction_delay,
                 easing: instruction.instruction_easing
             }
-            if(wait < (data.delay + data.easing)){
-                wait = data.delay + data.easing;
+            if(wait < (instruction.instruction_delay + instruction.instruction_time)){
+                wait = instruction.instruction_delay + instruction.instruction_time;
             }
             broker.publish(`color/${instruction.light_address}`,JSON.stringify(data));
         }
        nextFrame.complete = true;
        getRepository(Frame).save(nextFrame);
        Logger.debug("sent");
-    } else {
-        Logger.debug("no message");
     }
+    
     setTimeout(getNextInstruction, wait);
 }
 
-function handleMessage(topic,message){};
+function handleMessage(topic:String,message:String){};
 
 async function start(){
     if(process.env.QUEUE_ENABLED){
