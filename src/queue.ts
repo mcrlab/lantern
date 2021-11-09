@@ -1,11 +1,12 @@
 import "reflect-metadata";
-import {getRepository } from "typeorm";
+import {createConnection, getRepository } from "typeorm";
 import { Frame } from "./entity/Frame";
 import { LightInstruction } from "./entity/LightInstruction";
 import broker from "./lib/mqtt";
 import Logger from "./lib/logger";
 
 async function getNextInstruction(){
+    let wait = 10;
     const nextFrame = await getRepository(Frame)
                             .createQueryBuilder("frame")
                             .where("frame.complete = :isComplete", { isComplete: false })
@@ -31,6 +32,9 @@ async function getNextInstruction(){
                 delay: instruction.instruction_delay,
                 easing: instruction.instruction_easing
             }
+            if(wait < (data.delay + data.easing)){
+                wait = data.delay + data.easing;
+            }
             broker.publish(`color/${instruction.light_address}`,JSON.stringify(data));
         }
        nextFrame.complete = true;
@@ -39,6 +43,11 @@ async function getNextInstruction(){
     } else {
         Logger.debug("no message");
     }
+    setTimeout(getNextInstruction, wait);
+}
+async function start(){
+    await createConnection();
+    getNextInstruction();
 }
 
-getNextInstruction();
+start();
