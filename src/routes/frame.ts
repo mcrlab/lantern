@@ -25,11 +25,7 @@ const frameRouter = express.Router()
         frame.complete     = false;
         frame.created      = new Date();
         frame.wait         = 0;
-
-        if(process.env.QUEUE_ENABLED){
-            await getRepository(Frame).save(frame);
-        }
-
+        let instructions:LightInstruction[] = [];
         colors.map(async (color:string, i:number)=> {
             if(lights[i]){
                 const instruction = new LightInstruction();
@@ -44,8 +40,7 @@ const frameRouter = express.Router()
                 if(process.env.QUEUE_ENABLED){
                     instruction.frame = frame;
                     await getRepository(LightInstruction).save(instruction);
-                    frame.wait = (time + delay)
-                    await getRepository(Frame).save(frame);
+                    instructions.push(instruction);
                 } else {
                     delete instruction.light;
                     broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
@@ -56,6 +51,7 @@ const frameRouter = express.Router()
         });
         if(process.env.QUEUE_ENABLED){
             frame.wait = wait;
+            frame.instructions = instructions;
             await getRepository(Frame).save(frame);
         }
         return res.json({});
@@ -70,15 +66,13 @@ const frameRouter = express.Router()
         const updates = req.body.lights;
 
         const lights = await getRepository(Light).find();
+        let instructions:LightInstruction[] = [];
         let wait = 0;
         const frame        = new Frame();
         frame.complete     = false;
         frame.wait         = 0;
         frame.created      = new Date();
 
-        if(process.env.QUEUE_ENABLED){
-            await getRepository(Frame).save(frame);
-        }
         updates.map(async (update:any, i:number)=> {
             const light = lights.find((element)=> { return element.id === update.id});
             if(light){
@@ -92,8 +86,8 @@ const frameRouter = express.Router()
                     wait = instruction.time + instruction.delay;
                 }
                 if(process.env.QUEUE_ENABLED){
-                    instruction.frame = frame;
                     await getRepository(LightInstruction).save(instruction);
+                    instructions.push(instruction);
                 } else {
                     delete instruction.light;
                     broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
@@ -102,6 +96,7 @@ const frameRouter = express.Router()
         });
         if(process.env.QUEUE_ENABLED){
             frame.wait = wait;
+            frame.instructions = instructions;
             await getRepository(Frame).save(frame);
         }
 

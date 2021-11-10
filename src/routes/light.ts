@@ -19,8 +19,8 @@ const lightRouter = express.Router()
 .post('/', async (req: Request, res: Response) => {
     try {
         const color        = req.body.color;
-        const time:number  = parseInt(req.body.time, 10);
-        const delay:number = parseInt(req.body.delay, 10);
+        const time:number  = parseInt(req.body.time, 10) || 0;
+        const delay:number = parseInt(req.body.delay, 10) || 0;
         const easing       = req.body.easing || "LinearInterpolation";
         const lights       = await getRepository(Light).find();
 
