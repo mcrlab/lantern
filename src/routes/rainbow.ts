@@ -52,7 +52,11 @@ function Wheel(WheelPos:number){
 const rainbowRouter = express.Router()
 .post('/', async (req: Request, res: Response) => {
     try {
-        const lights = await getRepository(Light).find();
+        const lights = await getRepository(Light).find({
+            order: {
+                x: "ASC"
+            },
+        });
         lights.sort((a,b)=>{
             return a.x - b.x
         });

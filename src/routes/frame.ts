@@ -7,7 +7,7 @@ import { LightInstruction } from "../entity/LightInstruction";
 import {Frame} from "../entity/Frame";
 import Logger from "../lib/logger";
 import broker from "../lib/mqtt";
-import { loggers } from "winston";
+
 const frameRouter = express.Router()
 .get('/', async (req: Request, res: Response) => {
     const data = await getRepository(Frame).find();
@@ -17,7 +17,11 @@ const frameRouter = express.Router()
     try {
         const colors = req.body.colors;
 
-        const lights = await getRepository(Light).find();
+        const lights = await getRepository(Light).find({
+            order: {
+                x: "ASC"
+            },
+        });
         let wait = 0;
         const time   = 10;
         const delay  = 10;
@@ -96,7 +100,7 @@ const frameRouter = express.Router()
                 }
             }
         });
-        
+
         if(process.env.QUEUE_ENABLED){
             const frame        = new Frame();
             frame.complete     = false;
