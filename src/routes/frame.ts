@@ -7,6 +7,7 @@ import { LightInstruction } from "../entity/LightInstruction";
 import {Frame} from "../entity/Frame";
 import Logger from "../lib/logger";
 import broker from "../lib/mqtt";
+import { loggers } from "winston";
 const frameRouter = express.Router()
 .get('/', async (req: Request, res: Response) => {
     const data = await getRepository(Frame).find();
@@ -17,30 +18,31 @@ const frameRouter = express.Router()
         const colors = req.body.colors;
 
         const lights = await getRepository(Light).find();
-        let wait;
+        let wait = 0;
         const time   = 10;
         const delay  = 10;
         const easing = req.body.easing || "LinearInterpolation";
-        const frame        = new Frame();
-        frame.complete     = false;
-        frame.created      = new Date();
-        frame.wait         = 0;
+
         let instructions:LightInstruction[] = [];
+
         colors.map(async (color:string, i:number)=> {
+            
             if(lights[i]){
+                Logger.info(color);
                 const instruction = new LightInstruction();
                 instruction.light = lights[i];
                 instruction.color = color;
                 instruction.easing = easing;
                 instruction.time = time;
                 instruction.delay = delay;
+                instructions.push(instruction);
+
                 if(wait < (instruction.time + instruction.delay)){
                     wait = instruction.time + instruction.delay;
                 }
                 if(process.env.QUEUE_ENABLED){
-                    instruction.frame = frame;
                     await getRepository(LightInstruction).save(instruction);
-                    instructions.push(instruction);
+
                 } else {
                     delete instruction.light;
                     broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
@@ -50,7 +52,10 @@ const frameRouter = express.Router()
             }
         });
         if(process.env.QUEUE_ENABLED){
-            frame.wait = wait;
+            const frame        = new Frame();
+            frame.complete     = false;
+            frame.created      = new Date();
+            frame.wait         = wait;
             frame.instructions = instructions;
             await getRepository(Frame).save(frame);
         }
@@ -68,10 +73,7 @@ const frameRouter = express.Router()
         const lights = await getRepository(Light).find();
         let instructions:LightInstruction[] = [];
         let wait = 0;
-        const frame        = new Frame();
-        frame.complete     = false;
-        frame.wait         = 0;
-        frame.created      = new Date();
+
 
         updates.map(async (update:any, i:number)=> {
             const light = lights.find((element)=> { return element.id === update.id});
@@ -82,19 +84,24 @@ const frameRouter = express.Router()
                 instruction.easing = update.easing || "LinearInterpolation";
                 instruction.time = update.time || 0;
                 instruction.delay = update.delay || 0;
+                instructions.push(instruction);
                 if(wait < (instruction.time + instruction.delay)){
                     wait = instruction.time + instruction.delay;
                 }
                 if(process.env.QUEUE_ENABLED){
                     await getRepository(LightInstruction).save(instruction);
-                    instructions.push(instruction);
                 } else {
                     delete instruction.light;
                     broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
                 }
             }
         });
+        
         if(process.env.QUEUE_ENABLED){
+            const frame        = new Frame();
+            frame.complete     = false;
+            frame.wait         = 0;
+            frame.created      = new Date();
             frame.wait = wait;
             frame.instructions = instructions;
             await getRepository(Frame).save(frame);

@@ -82,7 +82,7 @@ const rainbowRouter = express.Router()
             instruction.delay = delay;
             instructions.push(instruction);
 
-            if(!process.env.QUEUE_ENABLED){
+            if(process.env.QUEUE_ENABLED){
                 await getRepository(LightInstruction).save(instruction);
             } else {
                 delete instruction.light;

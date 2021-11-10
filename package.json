@@ -16,7 +16,7 @@
          "src"
       ],
       "ext": "ts",
-      "exec": "node dist/index.js"
+      "exec": "ts-node src/index.ts"
    },
    "keywords": [],
    "author": "",

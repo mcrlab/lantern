@@ -13,7 +13,6 @@ import Logger from "../lib/logger";
 const lightRouter = express.Router()
 .get('/', async (req: Request, res: Response) => {
     const lights = await getRepository(Light).find();
-    Logger.info(queue.len());
     res.json(lights);
 })
 .post('/', async (req: Request, res: Response) => {
@@ -23,6 +22,7 @@ const lightRouter = express.Router()
         const delay:number = parseInt(req.body.delay, 10) || 0;
         const easing       = req.body.easing || "LinearInterpolation";
         const lights       = await getRepository(Light).find();
+        let instructions:LightInstruction[] = [];
 
         for(const light of lights){
             const instruction = new LightInstruction();
@@ -33,20 +33,22 @@ const lightRouter = express.Router()
             instruction.easing = easing;
 
             if(process.env.QUEUE_ENABLED){
-                const frame = new Frame();
-                frame.complete     = false;
-                frame.wait         = time + delay;
-                frame.created      = new Date();
-                await getRepository(Frame).save(frame);
-
-                instruction.frame = frame;
                 await getRepository(LightInstruction).save(instruction);
-
+                instructions.push(instruction);
             } else {
                 delete instruction.light;
                 broker.publish(`color/${light.address}`, JSON.stringify(instruction));
             }
         }
+        if(process.env.QUEUE_ENABLED){
+            const frame = new Frame();
+            frame.complete     = false;
+            frame.wait         = time + delay;
+            frame.created      = new Date();
+            frame.instructions = instructions;
+            await getRepository(Frame).save(frame);
+        }
+
         return res.json({});
 
       } catch(error){
@@ -66,8 +68,8 @@ const lightRouter = express.Router()
 
     const color  = req.body.color;
     const easing = req.body.easing || "LinearInterpolation";
-    const time   = req.body.time;
-    const delay  = req.body.delay;
+    const time   = parseInt(req.body.time, 10) || 0;
+    const delay  = parseInt(req.body.delay, 10) || 0;
 
     const light = await getRepository(Light).findOne(req.params.lightID);
     if(light){
@@ -80,13 +82,13 @@ const lightRouter = express.Router()
         instruction.time   = time;
 
         if(process.env.QUEUE_ENABLED){
+            await getRepository(LightInstruction).save(instruction);
             const frame = new Frame();
             frame.complete     = false;
             frame.wait         = time + delay;
             frame.created      = new Date();
+            frame.instructions = [instruction];
             await getRepository(Frame).save(frame);
-            instruction.frame = frame;
-            await getRepository(LightInstruction).save(instruction);
         } else {
             delete instruction.light;
             broker.publish(`color/${light.address}`, JSON.stringify(instruction));
