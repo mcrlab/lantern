@@ -1,3 +1,4 @@
+import { readlinkSync } from 'fs';
 import * as redis from 'redis';
 import Logger from './logger';
 const { promisify } = require("util");
@@ -24,7 +25,9 @@ redisClient.on("ready", (err) => {
 
 const pushAsync = promisify(redisClient.rpush).bind(redisClient);
 const popAsync = promisify(redisClient.lpop).bind(redisClient);
+const lrangeAsync = promisify(redisClient.lrange).bind(redisClient);
 const lengthAsync = promisify(redisClient.llen).bind(redisClient);
+
 
 let add = async (wait, instructionSet)=>{
     if(redisReady){

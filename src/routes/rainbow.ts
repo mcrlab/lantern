@@ -68,9 +68,7 @@ const rainbowRouter = express.Router()
         frame.wait         = time + delay;
         frame.created      = new Date();
 
-        if(process.env.QUEUE_ENABLED){
-            await getRepository(Frame).save(frame);
-        }
+        let instructions: LightInstruction[] = [];
 
         lights.map(async(light, index)=>{
 
@@ -82,16 +80,19 @@ const rainbowRouter = express.Router()
             instruction.easing = easing;
             instruction.time = time;
             instruction.delay = delay;
+            instructions.push(instruction);
 
-            if(process.env.QUEUE_ENABLED){
-                instruction.frame = frame;
+            if(!process.env.QUEUE_ENABLED){
                 await getRepository(LightInstruction).save(instruction);
             } else {
                 delete instruction.light;
                 broker.publish(`color/${light.address}`, JSON.stringify(instruction));
             }
         });
-
+        if(process.env.QUEUE_ENABLED){
+            frame.instructions = instructions;
+            await getRepository(Frame).save(frame);
+        }
         res.json({});
     } catch(error){
         Logger.error(error);

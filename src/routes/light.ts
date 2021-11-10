@@ -56,7 +56,11 @@ const lightRouter = express.Router()
 })
 .get("/:lightID", async (req: Request, res: Response) => {
     const light = await getRepository(Light).findOne(req.params.lightID);
-    res.json(light);
+    if(light) {
+        res.json(light);
+    } else {
+        res.status(404).json("Light not found");
+    }
 })
 .post("/:lightID", async (req: Request, res: Response) => {
 
@@ -87,8 +91,11 @@ const lightRouter = express.Router()
             delete instruction.light;
             broker.publish(`color/${light.address}`, JSON.stringify(instruction));
         }
+        res.json({});
+    } else {
+        res.status(404).json("Light not found");
     }
-    res.json({});
+
 
 })
 .post("/:lightID/position", async(req: Request, res: Response) => {
@@ -102,7 +109,7 @@ const lightRouter = express.Router()
         await getRepository(Light).save(light);
         res.json({});
     } else {
-        res.status(404).send("Light not found!")
+        res.status(404).json("Light not found!")
     }
 })
 .post("/:lightID/update", async (req: Request, res: Response) => {
@@ -112,7 +119,7 @@ const lightRouter = express.Router()
         broker.publish(`update/${light.address}`, "{}");
         res.send({});
     } else {
-        res.status(404).send("Light not found!")
+        res.status(404).json("Light not found!")
     }
 })
 .post("/:lightID/sleep", async (req: Request, res: Response) => {
@@ -128,7 +135,7 @@ const lightRouter = express.Router()
         broker.publish(`sleep/${light.address}`,JSON.stringify(data));
         res.send({});
     } else {
-        res.status(404).send("Light not found!")
+        res.status(404).json("Light not found!")
     }
 })
 .post("/:lightID/restart", async (req: Request, res: Response) => {
@@ -138,7 +145,7 @@ const lightRouter = express.Router()
         broker.publish(`restart/${light.address}`, "{}");
         res.send({});
     } else {
-        res.status(404).send("Light not found!")
+        res.status(404).json("Light not found!")
     }
 })
 .post("/:lightID/config", async (req: Request, res: Response) => {
@@ -149,7 +156,7 @@ const lightRouter = express.Router()
         broker.publish(`config/${light.address}`, JSON.stringify(config));
         res.send({});
     } else {
-        res.status(404).send("Light not found!")
+        res.status(404).json("Light not found!")
     }
 })
 .post("/:lightID/delete", async (req: Request, res: Response) => {
@@ -159,7 +166,7 @@ const lightRouter = express.Router()
         await getRepository(Light).remove(light);
         res.send("Success");
     } else {
-        res.status(404).send("Light not found!")
+        res.status(404).json("Light not found!")
     }
 
 });
