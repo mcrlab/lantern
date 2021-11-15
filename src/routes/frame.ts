@@ -23,8 +23,8 @@ const frameRouter = express.Router()
             },
         });
         let wait = 0;
-        const time   = 10;
-        const delay  = 10;
+        const time   = req.body.time   || 10;
+        const delay  = req.body.delay  || 10;
         const easing = req.body.easing || "LinearInterpolation";
 
         let instructions:LightInstruction[] = [];
