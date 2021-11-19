@@ -31,7 +31,7 @@ const debugRouter = express.Router()
                 delay: instruction.instruction_delay,
                 easing: instruction.instruction_easing
             }
-            broker.publish(`color/${instruction.light_address}`,JSON.stringify(data));
+            //broker.publish(`color/${instruction.light_address}`,JSON.stringify(data));
         }
        nextFrame.complete = true;
        getRepository(Frame).save(nextFrame);

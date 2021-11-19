@@ -2,8 +2,10 @@ import "reflect-metadata";
 import {createConnection, getRepository } from "typeorm";
 import { Frame } from "./entity/Frame";
 import { LightInstruction } from "./entity/LightInstruction";
-import broker from "./lib/mqtt";
+
 import Logger from "./lib/logger";
+import MQTTBroker from "./lib/mqtt";
+const broker = new MQTTBroker();
 
 async function getNextInstruction(){
     let wait = 10;

@@ -24,13 +24,13 @@ const mqttRouter = express.Router()
 })
 .post('/', async (req: Request, res: Response) => {
     const user = new MQTTUser();
-    user.username = "James";
-    user.password = toHASH("password");
+    user.username = req.body.username;
+    user.password = toHASH(req.body.password);
     user.isActive = true;
     user.isAdmin = false;
 
     const data = await getRepository(MQTTUser).save(user);
-    res.json("Hello world");
+    res.json({});
     Logger.debug(data);
 });
 

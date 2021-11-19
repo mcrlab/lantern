@@ -90,7 +90,7 @@ const rainbowRouter = express.Router()
                 await getRepository(LightInstruction).save(instruction);
             } else {
                 delete instruction.light;
-                broker.publish(`color/${light.address}`, JSON.stringify(instruction));
+                //broker.publish(`color/${light.address}`, JSON.stringify(instruction));
             }
         });
         if(process.env.QUEUE_ENABLED){

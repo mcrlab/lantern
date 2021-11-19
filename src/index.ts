@@ -6,26 +6,31 @@ import {createConnection, getRepository} from "typeorm";
 import Logger from "./lib/logger";
 import morganMiddleware from "./config/morganMiddleWare";
 import mqttRouter from "./routes/mqtt";
-import lightRouter from "./routes/light";
 import colorRouter from "./routes/color";
 import easingRouter from "./routes/easing";
-import rainbowRouter from "./routes/rainbow";
-import broker from "./lib/mqtt";
-import { handleMessage } from "./lib/messageHandler";
+//import rainbowRouter from "./routes/rainbow";
+
 import * as http from 'http';
 import { WebSocket } from 'ws';
 import { Light } from "./entity/Light";
 import frameRouter from "./routes/frame";
 import debugRouter from "./routes/debug";
+import { LightController } from "./lib/LightController";
+import createLightRoutes from "./routes/light";
+import createFrameRoutes from "./routes/frame";
+import MQTTBroker from "./lib/mqtt";
 
 const start = async ()=> {
   dotenv.config();
   const port = process.env.SERVER_PORT || '3001';
 
-  await createConnection();
-  await broker.init("API", handleMessage);
+  await createConnection(); 
+
 
   const app = express();
+  const broker = new MQTTBroker();
+  const controller = new LightController(broker);
+  await broker.init("API1", (a,b)=>controller.handleMessage(a,b) );
 
   app.use(morganMiddleware);
   app.use(helmet());
@@ -41,11 +46,11 @@ const start = async ()=> {
   });
 
   app.use("/mqtt", mqttRouter);
-  app.use("/lights", lightRouter);
+  app.use("/lights", createLightRoutes(broker, controller));
   app.use("/colors", colorRouter);
   app.use("/easings", easingRouter);
-  app.use("/frames", frameRouter);
-  app.use("/rainbow", rainbowRouter);
+  app.use("/frames", createFrameRoutes(broker));
+  //app.use("/rainbow", rainbowRouter);
   app.use("/debug", debugRouter);
 
   const server = http.createServer(app);
@@ -59,22 +64,21 @@ const start = async ()=> {
         "data": { "lights": data }
       }
     ));
-
-    // lightController.registerCallback((instruction, data)=>{
-    //   wss.clients.forEach(function each(client) {
-    //     if (client.readyState === WebSocket.OPEN) {
-    //       client.send(JSON.stringify(
-    //         {
-    //           "instruction": instruction,
-    //           "data": data
-    //         }
-    //       ));
-    //     }
-    //   });
-    // });
-
   });
 
+  controller.registerCallback((instruction: string, data: any)=>{
+    wss.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(
+          {
+            "instruction": instruction,
+            "data": data
+          }
+        ));
+      }
+    });
+  });
+  
   server.listen(port, () => {
     Logger.info( `Web server started` );
   });

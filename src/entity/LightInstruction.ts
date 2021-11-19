@@ -23,11 +23,14 @@ export class LightInstruction {
     time: number;
 
     @ManyToOne(() => Light, light => light.instructions, {
-        cascade: true
+        cascade: true,
+        onDelete: 'CASCADE'
     })
     @JoinColumn()
     light: Light;
 
-    @ManyToOne(() => Frame, frame => frame.instructions)
+    @ManyToOne(() => Frame, frame => frame.instructions, {
+        onDelete: 'CASCADE'
+    })
     frame: Frame
 }

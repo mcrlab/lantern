@@ -45,7 +45,9 @@ export class Light {
     @Column("json")
     config: {};
 
-    @OneToMany(() => LightInstruction, instruction => instruction.light)
+    @OneToMany(() => LightInstruction, instruction => instruction.light,{
+        onDelete: "CASCADE"
+    })
     instructions: LightInstruction[];
 
 

@@ -4,7 +4,7 @@ import Logger from "./logger";
 
 dotenv.config();
 
-class MQTTBroker {
+export default class MQTTBroker {
     clientId: string;
     client: mqtt.Client;
 
@@ -52,6 +52,3 @@ class MQTTBroker {
   }
 
 }
-
-const broker = new MQTTBroker();
-export default broker;
