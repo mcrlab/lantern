@@ -22,6 +22,7 @@ function createFrameRoutes(broker:MQTTBroker) {
                 order: {
                     x: "ASC"
                 },
+                cache: true
             });
             let wait = 0;
             const time   = req.body.time   || 10;
