@@ -6,7 +6,6 @@ import { Light } from "../entity/Light";
 import { LightInstruction } from "../entity/LightInstruction";
 import {Frame} from "../entity/Frame";
 import Logger from "../lib/logger";
-import broker from "../lib/mqtt";
 import MQTTBroker from "../lib/mqtt";
 function createFrameRoutes(broker:MQTTBroker) {
     const frameRouter = express.Router()
@@ -21,8 +20,7 @@ function createFrameRoutes(broker:MQTTBroker) {
             const lights = await getRepository(Light).find({
                 order: {
                     x: "ASC"
-                },
-                cache: true
+                }
             });
             let wait = 0;
             const time   = req.body.time   || 10;
@@ -50,8 +48,10 @@ function createFrameRoutes(broker:MQTTBroker) {
                         await getRepository(LightInstruction).save(instruction);
 
                     } else {
-                        delete instruction.light;
-                        broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
+                        if(lights[i].color !== instruction.color){
+                            delete instruction.light;
+                            broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
+                        }
                     }
                 } else {
                     return;
