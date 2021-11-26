@@ -17,9 +17,6 @@ export class LightInstruction {
     easing: string;
 
     @Column()
-    delay: number;
-
-    @Column()
     time: number;
 
     @ManyToOne(() => Light, light => light.instructions, {

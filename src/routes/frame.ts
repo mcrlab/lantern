@@ -38,11 +38,11 @@ function createFrameRoutes(broker:MQTTBroker) {
                     instruction.color = color;
                     instruction.easing = easing;
                     instruction.time = time;
-                    instruction.delay = delay;
+  
                     instructions.push(instruction);
 
-                    if(wait < (instruction.time + instruction.delay)){
-                        wait = instruction.time + instruction.delay;
+                    if(wait < (instruction.time )){
+                        wait = instruction.time;
                     }
                     if(process.env.QUEUE_ENABLED){
                         await getRepository(LightInstruction).save(instruction);
@@ -89,10 +89,9 @@ function createFrameRoutes(broker:MQTTBroker) {
                     instruction.color = update.color;
                     instruction.easing = update.easing || "LinearInterpolation";
                     instruction.time = update.time || 0;
-                    instruction.delay = update.delay || 0;
                     instructions.push(instruction);
-                    if(wait < (instruction.time + instruction.delay)){
-                        wait = instruction.time + instruction.delay;
+                    if(wait < (instruction.time)){
+                        wait = instruction.time;
                     }
                     if(process.env.QUEUE_ENABLED){
                         await getRepository(LightInstruction).save(instruction);

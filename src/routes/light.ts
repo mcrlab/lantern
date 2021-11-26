@@ -21,7 +21,6 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
         try {
             const color        = req.body.color;
             const time:number  = parseInt(req.body.time, 10) || 0;
-            const delay:number = parseInt(req.body.delay, 10) || 0;
             const easing       = req.body.easing || "LinearInterpolation";
             const lights       = await getRepository(Light).find();
             let instructions:LightInstruction[] = [];
@@ -31,7 +30,6 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
                 instruction.light = light;
                 instruction.color = color;
                 instruction.time = time;
-                instruction.delay = delay;
                 instruction.easing = easing;
     
                 if(process.env.QUEUE_ENABLED){
@@ -45,7 +43,7 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
             if(process.env.QUEUE_ENABLED){
                 const frame = new Frame();
                 frame.complete     = false;
-                frame.wait         = time + delay;
+                frame.wait         = time;
                 frame.created      = new Date();
                 frame.instructions = instructions;
                 await getRepository(Frame).save(frame);
@@ -71,7 +69,7 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
         const color  = req.body.color;
         const easing = req.body.easing || "LinearInterpolation";
         const time   = parseInt(req.body.time, 10) || 0;
-        const delay  = parseInt(req.body.delay, 10) || 0;
+
     
         const light = await getRepository(Light).findOne(req.params.lightID);
         if(light){
@@ -80,14 +78,12 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
             instruction.light  = light;
             instruction.color  = color;
             instruction.easing = easing;
-            instruction.delay  = delay;
             instruction.time   = time;
     
             if(process.env.QUEUE_ENABLED){
                 await getRepository(LightInstruction).save(instruction);
                 const frame = new Frame();
                 frame.complete     = false;
-                frame.wait         = time + delay;
                 frame.created      = new Date();
                 frame.instructions = [instruction];
                 await getRepository(Frame).save(frame);

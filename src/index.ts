@@ -8,12 +8,10 @@ import morganMiddleware from "./config/morganMiddleWare";
 import mqttRouter from "./routes/mqtt";
 import colorRouter from "./routes/color";
 import easingRouter from "./routes/easing";
-//import rainbowRouter from "./routes/rainbow";
 
 import * as http from 'http';
 import { WebSocket } from 'ws';
 import { Light } from "./entity/Light";
-import frameRouter from "./routes/frame";
 import debugRouter from "./routes/debug";
 import { LightController } from "./lib/LightController";
 import createLightRoutes from "./routes/light";
@@ -30,7 +28,7 @@ const start = async ()=> {
   const app = express();
   const broker = new MQTTBroker();
   const controller = new LightController(broker);
-  await broker.init("API1", (a,b)=>controller.handleMessage(a,b) );
+  await broker.init("API_Dev", (a,b)=>controller.handleMessage(a,b) );
 
   app.use(morganMiddleware);
   app.use(helmet());

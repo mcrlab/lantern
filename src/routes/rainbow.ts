@@ -83,7 +83,7 @@ const rainbowRouter = express.Router()
             instruction.color = color;
             instruction.easing = easing;
             instruction.time = time;
-            instruction.delay = delay;
+
             instructions.push(instruction);
 
             if(process.env.QUEUE_ENABLED){

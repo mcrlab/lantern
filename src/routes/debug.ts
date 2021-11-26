@@ -28,7 +28,6 @@ const debugRouter = express.Router()
             const data = {
                 color: instruction.instruction_color,
                 time:instruction.instruction_time,
-                delay: instruction.instruction_delay,
                 easing: instruction.instruction_easing
             }
             //broker.publish(`color/${instruction.light_address}`,JSON.stringify(data));
