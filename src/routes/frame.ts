@@ -38,6 +38,7 @@ function createFrameRoutes(broker:MQTTBroker) {
                     instruction.color = color;
                     instruction.easing = easing;
                     instruction.time = time;
+                    instruction.delay = 0;
   
                     instructions.push(instruction);
 
@@ -89,6 +90,7 @@ function createFrameRoutes(broker:MQTTBroker) {
                     instruction.color = update.color;
                     instruction.easing = update.easing || "LinearInterpolation";
                     instruction.time = update.time || 0;
+                    instruction.delay = 0;
                     instructions.push(instruction);
                     if(wait < (instruction.time)){
                         wait = instruction.time;

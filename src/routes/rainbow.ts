@@ -83,6 +83,7 @@ const rainbowRouter = express.Router()
             instruction.color = color;
             instruction.easing = easing;
             instruction.time = time;
+            instruction.delay = 0;
 
             instructions.push(instruction);
 

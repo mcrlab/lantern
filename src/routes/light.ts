@@ -79,6 +79,7 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
             instruction.color  = color;
             instruction.easing = easing;
             instruction.time   = time;
+            instruction.delay  = 0;
     
             if(process.env.QUEUE_ENABLED){
                 await getRepository(LightInstruction).save(instruction);
