@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    networks:
+      - lantern-network 
     ports:
       - 80:8080
     environment:
@@ -15,11 +17,8 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: db
-    command: ["./bin/wait-for-postgres.sh", "${POSTGRES_HOST}", "./bin/server.sh"]
-    ports:
-      - 80:8080 
-    networks:
-      - lantern-network
+    command: ["./bin/wait-for-postgres.sh", "postgres", "./bin/server.sh"]
+
   mqtt:
     hostname: mqtt
     image: jameslinnegartw/lantern
@@ -31,11 +30,9 @@ services:
     ports:
       - 1883:1883
     networks:
-      - lantern-network
+      - lantern-network 
   postgres:
     image: postgres:10.4
-    networks:
-      - lantern-network
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     ports:
@@ -44,3 +41,9 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: db
+      ALLOW_IP_RANGE: '0.0.0.0/0'
+    networks:
+      - lantern-network 
+networks:
+  lantern-network:
+    driver: bridge # a user defined bridge is required; the default bridge network doesn't support name resolution
