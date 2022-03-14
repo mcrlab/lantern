@@ -12,12 +12,12 @@ services:
     environment:
       MQTT_URL: "mqtt://lantern:ilovelamp@mqtt:1883"
       SERVER_PORT: 8080
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: db
-    command: ["./bin/wait-for-postgres.sh", "postgres", "./bin/server.sh"]
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    command: ["./bin/wait-for-postgres.sh", "${POSTGRES_HOST}", "./bin/server.sh"]
 
   mqtt:
     hostname: mqtt
@@ -38,9 +38,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
       ALLOW_IP_RANGE: '0.0.0.0/0'
     networks:
       - lantern-network 
