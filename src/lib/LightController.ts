@@ -52,7 +52,6 @@ export class LightController {
             if(light){
                 light.lastUpdated = new Date();
                 light.color = data.color;
-                light.voltage = data.voltage;
                 await getRepository(Light).save(light);
                 this.callback("UPDATE_LIGHT", JSON.stringify(light));
                 Logger.debug(`Light ${light.address} pinged`);

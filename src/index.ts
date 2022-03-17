@@ -17,6 +17,7 @@ import { LightController } from "./lib/LightController";
 import createLightRoutes from "./routes/light";
 import createFrameRoutes from "./routes/frame";
 import MQTTBroker from "./lib/mqtt";
+import * as path from "path";
 
 const start = async ()=> {
   dotenv.config();
@@ -29,7 +30,7 @@ const start = async ()=> {
   const broker = new MQTTBroker();
   const controller = new LightController(broker);
   await broker.init("API_Dev", (a,b)=>controller.handleMessage(a,b) );
-
+  app.use(express.static("client/build"))
   app.use(morganMiddleware);
   app.use(helmet());
   app.use(express.json());
@@ -50,6 +51,9 @@ const start = async ()=> {
   app.use("/frames", createFrameRoutes(broker));
   //app.use("/rainbow", rainbowRouter);
   app.use("/debug", debugRouter);
+  app.get("/",  (req, res)=> {
+    res.sendFile(path.resolve(__dirname, "..","client", "build", "index.html"));
+  });
 
   const server = http.createServer(app);
   const wss = new WebSocket.Server({ server });

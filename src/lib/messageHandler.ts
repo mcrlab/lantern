@@ -36,7 +36,6 @@ export const handleMessage = async (topic: string, message: string) => {
             if(light){
                 light.lastUpdated = new Date();
                 light.color = data.color;
-                light.voltage = data.voltage;
                 await getRepository(Light).save(light);
                 Logger.debug(`Light ${light.address} pinged`);
               }
