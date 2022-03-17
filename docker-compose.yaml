@@ -31,6 +31,7 @@ services:
       - 1883:1883
     networks:
       - lantern-network 
+
   postgres:
     image: postgres:10.4
     volumes:
@@ -44,6 +45,7 @@ services:
       ALLOW_IP_RANGE: '0.0.0.0/0'
     networks:
       - lantern-network 
+
 networks:
   lantern-network:
-    driver: bridge # a user defined bridge is required; the default bridge network doesn't support name resolution
+    driver: bridge
