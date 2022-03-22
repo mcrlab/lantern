@@ -9,6 +9,7 @@ services:
       - lantern-network 
     ports:
       - 80:8080
+    restart: always
     environment:
       MQTT_URL: "mqtt://lantern:ilovelamp@mqtt:1883"
       SERVER_PORT: 8080

@@ -33,6 +33,7 @@
       "redis": "3.1.2",
       "reflect-metadata": "^0.1.10",
       "typeorm": "0.2.38",
+      "websocket": "1.0.34",
       "winston": "^3.3.3",
       "ws": "^8.2.3"
    },
@@ -44,6 +45,7 @@
       "@types/node": "^8.0.29",
       "@types/pbkdf2": "3.1.0",
       "@types/redis": "2.8.32",
+      "@types/websocket": "1.0.5",
       "@types/ws": "^8.2.0",
       "nodemon": "2.0.14",
       "ts-node": "3.3.0",
