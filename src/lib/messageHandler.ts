@@ -12,6 +12,8 @@ export const handleMessage = async (topic: string, message: string) => {
           case "connect":
             if(light){
                 light.lastUpdated = new Date();
+                light.version = data.version || "-1";
+                light.memory = data.memory || "-1";
                 light.config = data.config || light.config;
                 await getRepository(Light).save(light);
                 Logger.debug(`Light ${light.address} connected`);
