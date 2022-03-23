@@ -56,6 +56,19 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
               res.status(400).json(error);
           };
     })
+    .post("/config", async (req: Request, res: Response) => {
+        const config = req.body;
+        broker.publish('config', JSON.stringify(config));
+        res.json({});
+    })
+    .post("/restart", async (req: Request, res: Response) => {
+        broker.publish(`restart`, "{}");
+        res.json({});
+    })
+    .post("/update", async (req: Request, res: Response) => {
+        broker.publish(`update`, "{}")
+        res.json({});
+    })
     .get("/:lightID", async (req: Request, res: Response) => {
         const light = await getRepository(Light).findOne(req.params.lightID);
         if(light) {
@@ -138,7 +151,7 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
     })
     .post("/:lightID/config", async (req: Request, res: Response) => {
         try {
-            const lightId = parseInt(req.params.lightId);
+            const lightId = parseInt(req.params.lightID, 10);
             const config = req.body;
             await controller.updateLightConfig(lightId, config);
             res.send({})
