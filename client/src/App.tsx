@@ -10,12 +10,15 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HighlightIcon from '@mui/icons-material/Highlight';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 import { Buffer } from 'buffer';
+import FormDialog from './Dialog';
+
+//import Dashboard from './Dashboard';
 
 interface AppProps {
 }
 interface AppState {
-  client: W3CWebSocket
   lights: Array<Light>
 }
 
@@ -42,23 +45,23 @@ interface Light {
   config: Config
 }
 
+const client = new W3CWebSocket(`ws://localhost/lights`);
+
 class App extends React.Component <AppProps, AppState>{
   constructor(props: any){
     super(props);
-
     this.state = {
-      client: new W3CWebSocket(`ws://localhost/lights`),
       lights: []
     }
   }
 
-  componentDidMount(){
+  componentWillMount(){
 
-    this.state.client.onopen = () => {
+    client.onopen = () => {
       console.log('WebSocket Client Connected');
     };
 
-    this.state.client.onmessage = (message) => {
+    client.onmessage = (message) => {
       const dataFromServer = JSON.parse(message.data.toString());
       let lights = this.state.lights;
       switch(dataFromServer.instruction){
@@ -74,12 +77,12 @@ class App extends React.Component <AppProps, AppState>{
           break;
           
         case 'UPDATE_LIGHT':
+          let updatedLight:Light = JSON.parse(dataFromServer.data);
           let updated = lights.map((light:Light) => {
             if (light.id ===dataFromServer.data.id) {
-              return Object.assign(light, dataFromServer.data);
+              return Object.assign(light, updatedLight);
             }
             return light
-            
           });
           this.setState({
             lights: updated
@@ -87,9 +90,23 @@ class App extends React.Component <AppProps, AppState>{
           break;
 
         case 'ADD_LIGHT':
-          lights.push( dataFromServer.data );
+          const light:Light = JSON.parse(dataFromServer.data);
+          console.log(light);
+
+          lights.push( light );
           this.setState({
             lights: lights
+          });
+          break;
+
+        case 'REMOVE_LIGHT':
+          let lightToRemove:Light = JSON.parse(dataFromServer.data);
+          console.log(lightToRemove);
+          let updateLights:Array<Light> = lights.filter((light:Light) => {
+            return (light.address !== lightToRemove.address);
+          });
+          this.setState({
+            lights: updateLights
           });
           break;
 
@@ -104,13 +121,17 @@ class App extends React.Component <AppProps, AppState>{
     this.state.lights.forEach((light:Light) => {
       list.push((<LightItem key={`light_${light.id}`} light={light} />))
     });
+    //return (<Dashboard />)
+
     return (
         <React.Fragment>
           <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
+                <TableCell>Colour</TableCell>
                 <TableCell >Version</TableCell>
+                <TableCell>Memory</TableCell>
                 <TableCell>Platform</TableCell>
                 <TableCell align="right">Last Updated</TableCell>
                 <TableCell></TableCell>
@@ -120,7 +141,7 @@ class App extends React.Component <AppProps, AppState>{
               {list}
             </TableBody>
           </Table>
-
+          <FormDialog />
         </React.Fragment>
     );
   }
@@ -137,6 +158,7 @@ class LightItem extends React.Component <LightItemProps, {}>{
     this.deleteLight = this.deleteLight.bind(this);
     this.poke = this.poke.bind(this);
     this.restart = this.restart.bind(this);
+    this.upgrade = this.upgrade.bind(this);
   }
 
   on(){
@@ -179,6 +201,21 @@ class LightItem extends React.Component <LightItemProps, {}>{
       console.log(json);
     })
   }
+  
+  upgrade(){
+    fetch(`/lights/${this.props.light.id}/update`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      }
+    })
+    .then(response => {
+      response.json()
+    })
+    .then(json => {
+      console.log(json);
+    })
+  }
 
   deleteLight(){
     fetch(`/lights/${this.props.light.id}/delete`,{
@@ -201,7 +238,9 @@ class LightItem extends React.Component <LightItemProps, {}>{
     return (
         <TableRow key={"light"+this.props.light.id}>
           <TableCell>{this.props.light.id}</TableCell>
+          <TableCell>{this.props.light.color}</TableCell>
           <TableCell>{this.props.light.version}</TableCell>
+          <TableCell>{this.props.light.memory}</TableCell>{}
           <TableCell>{this.props.light.platform}</TableCell>
           <TableCell align="right">{`${this.props.light.lastUpdated}`}</TableCell>
           <TableCell>
@@ -210,6 +249,9 @@ class LightItem extends React.Component <LightItemProps, {}>{
             </IconButton>
             <IconButton aria-label="restart" onClick={this.restart}>
               <RestartAltIcon />
+            </IconButton>
+            <IconButton aria-label="Upgrade" onClick={this.upgrade}>
+              <SystemUpdateAltIcon />
             </IconButton>
             <IconButton aria-label="delete" onClick={this.deleteLight}>
               <DeleteIcon />

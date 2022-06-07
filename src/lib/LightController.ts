@@ -27,6 +27,9 @@ export class LightController {
             if(light){ 
                 light.lastUpdated = new Date();
                 light.config = data.config || light.config;
+                light.memory = data.memory;
+                light.version = data.version
+
                 await getRepository(Light).save(light);
                 this.callback("UPDATE_LIGHT", JSON.stringify(light));
                 Logger.debug(`Light ${light.address} connected`);
