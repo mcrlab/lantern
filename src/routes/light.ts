@@ -11,6 +11,7 @@ import MQTTBroker from "../lib/mqtt";
 import Logger from "../lib/logger";
 import { LightController } from "../lib/LightController";
 
+
 function createLightRoutes(broker: MQTTBroker, controller: LightController){
     const lightRouter = express.Router()
     .get('/', async (req: Request, res: Response) => {
@@ -31,7 +32,8 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
                 instruction.color = color;
                 instruction.time = time;
                 instruction.easing = easing;
-    
+                instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
+                
                 if(process.env.QUEUE_ENABLED){
                     await getRepository(LightInstruction).save(instruction);
                     instructions.push(instruction);
@@ -93,7 +95,8 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
             instruction.easing = easing;
             instruction.time   = time;
             instruction.delay  = 0;
-    
+            instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
+
             if(process.env.QUEUE_ENABLED){
                 await getRepository(LightInstruction).save(instruction);
                 const frame = new Frame();
@@ -103,6 +106,7 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
                 await getRepository(Frame).save(frame);
             } else {
                 delete instruction.light;
+                
                 broker.publish(`color/${light.address}`, JSON.stringify(instruction));
             }
             res.json({});

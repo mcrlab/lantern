@@ -22,6 +22,9 @@ export class LightInstruction {
     @Column()
     delay: number;
 
+    @Column()
+    start_time: number;
+
     @ManyToOne(() => Light, light => light.instructions, {
         cascade: true,
         onDelete: 'CASCADE'

@@ -7,12 +7,15 @@ import MQTTBroker from "./mqtt";
 export class LightController {
     callback: { (instruction: string, data: string): void; }
     broker: MQTTBroker;
+    startTime: any;
     
     constructor(broker:MQTTBroker){
         this.broker = broker;
+        this.startTime = Date.now();
         this.callback = (instruction:string, data: string)=> {
             Logger.warn("Default callback used");
         }
+        setInterval(()=>{this.updateLightTimerOffets()}, parseInt(process.env.SYNC_INTERVAL) || 30000);
     }
     registerCallback(handler:(instruction: string, data: string) => void){
       this.callback = handler
@@ -49,6 +52,7 @@ export class LightController {
                 await getRepository(Light).save(newLight);
                 this.callback("ADD_LIGHT", JSON.stringify(newLight));
                 Logger.debug("New light created");
+                this.updateLightTimerOffets();
                 }
             return;
             case "ping":
@@ -131,5 +135,10 @@ export class LightController {
         } else {
             throw new LightNotFoundError();
         }
+    }
+    async updateLightTimerOffets(){
+        Logger.debug("Upding light timer offsets");
+        let msSinceStart = Math.ceil(process.uptime() * 1000); // milliseconds since process started
+        this.broker.publish('sync', msSinceStart.toString());
     }
   }
