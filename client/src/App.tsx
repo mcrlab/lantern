@@ -131,8 +131,6 @@ class App extends React.Component <AppProps, AppState>{
                 <TableCell>ID</TableCell>
                 <TableCell>Colour</TableCell>
                 <TableCell >Version</TableCell>
-                <TableCell>Memory</TableCell>
-                <TableCell>Platform</TableCell>
                 <TableCell align="right">Last Updated</TableCell>
                 <TableCell></TableCell>
               </TableRow>
@@ -141,7 +139,6 @@ class App extends React.Component <AppProps, AppState>{
               {list}
             </TableBody>
           </Table>
-          <FormDialog />
         </React.Fragment>
     );
   }
@@ -240,8 +237,6 @@ class LightItem extends React.Component <LightItemProps, {}>{
           <TableCell>{this.props.light.id}</TableCell>
           <TableCell>{this.props.light.color}</TableCell>
           <TableCell>{this.props.light.version}</TableCell>
-          <TableCell>{this.props.light.memory}</TableCell>{}
-          <TableCell>{this.props.light.platform}</TableCell>
           <TableCell align="right">{`${this.props.light.lastUpdated}`}</TableCell>
           <TableCell>
             <IconButton aria-label="poke" onClick={this.poke}>

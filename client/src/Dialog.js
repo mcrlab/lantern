@@ -20,7 +20,7 @@ export default function FormDialog() {
 
   return (
     <div>
-      <Dialog open={true} onClose={handleClose}>
+      <Dialog open={false} onClose={handleClose}>
         <DialogTitle>Light Settings</DialogTitle>
         <DialogContent>
           <DialogContentText>

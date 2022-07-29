@@ -96,6 +96,7 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
             instruction.time   = time;
             instruction.delay  = 0;
             instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
+            instruction.current_time = Math.ceil(process.uptime() * 1000);
 
             if(process.env.QUEUE_ENABLED){
                 await getRepository(LightInstruction).save(instruction);
