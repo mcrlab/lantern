@@ -39,7 +39,9 @@ function createFrameRoutes(broker:MQTTBroker) {
                     instruction.easing = easing;
                     instruction.time = time;
                     instruction.delay = 0;
-  
+                    instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
+                    instruction.current_time = Math.ceil(process.uptime() * 1000);
+                    
                     instructions.push(instruction);
 
                     if(wait < (instruction.time )){
