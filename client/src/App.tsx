@@ -13,6 +13,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 import { Buffer } from 'buffer';
 import FormDialog from './Dialog';
+import { json } from 'stream/consumers';
 
 //import Dashboard from './Dashboard';
 
@@ -45,7 +46,7 @@ interface Light {
   config: Config
 }
 
-const client = new W3CWebSocket(`ws://localhost/lights`);
+const client = new W3CWebSocket(`ws://${window.location.hostname}/lights`);
 
 class App extends React.Component <AppProps, AppState>{
   constructor(props: any){
@@ -119,6 +120,7 @@ class App extends React.Component <AppProps, AppState>{
   render(){
     let list:any = [];
     this.state.lights.forEach((light:Light) => {
+      console.log(light);
       list.push((<LightItem key={`light_${light.id}`} light={light} />))
     });
     //return (<Dashboard />)
@@ -129,8 +131,8 @@ class App extends React.Component <AppProps, AppState>{
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
-                <TableCell>Colour</TableCell>
                 <TableCell >Version</TableCell>
+                <TableCell>Platform</TableCell>
                 <TableCell align="right">Last Updated</TableCell>
                 <TableCell></TableCell>
               </TableRow>
@@ -156,6 +158,7 @@ class LightItem extends React.Component <LightItemProps, {}>{
     this.poke = this.poke.bind(this);
     this.restart = this.restart.bind(this);
     this.upgrade = this.upgrade.bind(this);
+    this.toggleDebug = this.toggleDebug.bind(this);
   }
 
   on(){
@@ -164,16 +167,15 @@ class LightItem extends React.Component <LightItemProps, {}>{
     .then(data => console.log(data))
   }
 
-  poke(){
+  lightColor(color:any){
     fetch(`/lights/${this.props.light.id}`,{
       method: "POST",
       headers: {
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        "color": "FF0000",
-        "time": 500,
-        "delay": 10
+        "color": color,
+        "time": 500
         })
     })
     .then(response => {
@@ -182,6 +184,13 @@ class LightItem extends React.Component <LightItemProps, {}>{
     .then(json => {
       console.log(json)
     });
+  }
+  poke(){
+   this.lightColor("FF0000")
+   setTimeout(()=>{
+    this.lightColor("000000")
+   },
+   1500);
   }
 
   restart(){
@@ -213,7 +222,24 @@ class LightItem extends React.Component <LightItemProps, {}>{
       console.log(json);
     })
   }
-
+  toggleDebug(){
+    fetch(`/lights/${this.props.light.id}/config`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({
+        "DEBUG": false
+      })
+    })
+    .then(response => {
+      console.log(response);
+      response.json()
+    })
+    .then(json => {
+      alert(json)
+    })
+  }
   deleteLight(){
     fetch(`/lights/${this.props.light.id}/delete`,{
         method: "POST",
@@ -235,10 +261,13 @@ class LightItem extends React.Component <LightItemProps, {}>{
     return (
         <TableRow key={"light"+this.props.light.id}>
           <TableCell>{this.props.light.id}</TableCell>
-          <TableCell>{this.props.light.color}</TableCell>
           <TableCell>{this.props.light.version}</TableCell>
+          <TableCell>{this.props.light.platform}</TableCell>
           <TableCell align="right">{`${this.props.light.lastUpdated}`}</TableCell>
           <TableCell>
+            <IconButton aria-label="poke" onClick={this.toggleDebug}>
+              <HighlightIcon />
+            </IconButton>
             <IconButton aria-label="poke" onClick={this.poke}>
               <HighlightIcon />
             </IconButton>
