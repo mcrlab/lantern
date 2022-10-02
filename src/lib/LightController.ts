@@ -43,7 +43,6 @@ export class LightController {
                 newLight.color = "000000";
                 newLight.platform = data.platform || "unknown";
                 newLight.x = 0;
-                newLight.y = 0;
                 newLight.sleep = 0;
                 newLight.config = data.config || {};
                 newLight.version = data.version || "-1";
@@ -109,7 +108,6 @@ export class LightController {
         const light = await getRepository(Light).findOne(lightId);
         if(light){
             light.x = x || 0;
-            light.y = y || 0;
             await getRepository(Light).save(light);
             this.callback("UPDATE_LIGHT", JSON.stringify(light));
         } else {

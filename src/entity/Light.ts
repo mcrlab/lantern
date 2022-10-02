@@ -30,9 +30,6 @@ export class Light {
     @Column({"type": "float"})
     x: number = 0.0;
 
-    @Column({"type": "float"})
-    y: number = 0.0;
-
     @Column()
     sleep: number;
 

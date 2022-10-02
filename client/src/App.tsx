@@ -131,6 +131,7 @@ class App extends React.Component <AppProps, AppState>{
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
+                <TableCell>Position</TableCell>
                 <TableCell >Version</TableCell>
                 <TableCell>Platform</TableCell>
                 <TableCell align="right">Last Updated</TableCell>
@@ -261,6 +262,8 @@ class LightItem extends React.Component <LightItemProps, {}>{
     return (
         <TableRow key={"light"+this.props.light.id}>
           <TableCell>{this.props.light.id}</TableCell>
+
+          <TableCell>{this.props.light.x}</TableCell>
           <TableCell>{this.props.light.version}</TableCell>
           <TableCell>{this.props.light.platform}</TableCell>
           <TableCell align="right">{`${this.props.light.lastUpdated}`}</TableCell>

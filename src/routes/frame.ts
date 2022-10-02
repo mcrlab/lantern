@@ -49,24 +49,39 @@ function createFrameRoutes(broker:MQTTBroker) {
                     }
                     if(process.env.QUEUE_ENABLED){
                         await getRepository(LightInstruction).save(instruction);
-
-                    } else {
-                        if(lights[i].color !== instruction.color){
-                            delete instruction.light;
-                            broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
-                        }
                     }
+                    // } else {
+                    //     //if(lights[i].color !== instruction.color){
+                    //         delete instruction.light;
+                    //         broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
+                    //     //}
+                    // }
                 } else {
                     return;
                 }
             });
+            const frame        = new Frame();
+            frame.complete     = false;
+            frame.created      = new Date();
+            frame.wait         = wait;
+            frame.instructions = instructions;
+            frame.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
             if(process.env.QUEUE_ENABLED){
-                const frame        = new Frame();
-                frame.complete     = false;
-                frame.created      = new Date();
-                frame.wait         = wait;
-                frame.instructions = instructions;
                 await getRepository(Frame).save(frame);
+            } else {
+
+                let instructionSet = []
+                for (const instruction of instructions){
+                    instructionSet.push({
+                        "address": instruction.light.address,
+                        "color": instruction.color,
+                        "easing": instruction.easing,
+                        "time": instruction.time,
+                        "start_time": instruction.start_time
+                    });
+                }
+
+                broker.publish('frame', JSON.stringify(instructionSet))
             }
             return res.json({});
 
