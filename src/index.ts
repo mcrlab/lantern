@@ -7,7 +7,7 @@ import Logger from "./lib/logger";
 import morganMiddleware from "./config/morganMiddleWare";
 import mqttRouter from "./routes/mqtt";
 import colorRouter from "./routes/color";
-import easingRouter from "./routes/easing";
+
 
 import * as http from 'http';
 import { WebSocket } from 'ws';
@@ -47,9 +47,7 @@ const start = async ()=> {
   app.use("/mqtt", mqttRouter);
   app.use("/lights", createLightRoutes(broker, controller));
   app.use("/colors", colorRouter);
-  app.use("/easings", easingRouter);
   app.use("/frames", createFrameRoutes(broker));
-  //app.use("/rainbow", rainbowRouter);
   app.use("/debug", debugRouter);
   app.get("/",  (req, res)=> {
     res.sendFile(path.resolve(__dirname, "..","client", "build", "index.html"));

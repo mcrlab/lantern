@@ -14,19 +14,7 @@ export class LightInstruction {
     color: string;
 
     @Column()
-    easing: string;
-
-    @Column()
-    time: number;
-
-    @Column()
-    delay: number;
-
-    @Column()
     start_time: number;
-
-    @Column()
-    current_time: number; 
 
     @ManyToOne(() => Light, light => light.instructions, {
         cascade: true,

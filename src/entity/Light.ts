@@ -24,9 +24,6 @@ export class Light {
     @Column()
     platform: string;
 
-    @Column()
-    memory: string;
-
     @Column({"type": "float"})
     x: number = 0.0;
 

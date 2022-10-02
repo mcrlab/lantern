@@ -22,7 +22,6 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
         try {
             const color        = req.body.color;
             const time:number  = parseInt(req.body.time, 10) || 0;
-            const easing       = req.body.easing || "LinearInterpolation";
             const lights       = await getRepository(Light).find();
             let instructions:LightInstruction[] = [];
     
@@ -30,10 +29,7 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
                 const instruction = new LightInstruction();
                 instruction.light = light;
                 instruction.color = color;
-                instruction.time = time;
-                instruction.easing = easing;
                 instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
-                instruction.current_time = Math.ceil(process.uptime() * 1000);
 
                 if(process.env.QUEUE_ENABLED){
                     await getRepository(LightInstruction).save(instruction);
@@ -93,12 +89,8 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
     
             instruction.light  = light;
             instruction.color  = color;
-            instruction.easing = easing;
-            instruction.time   = time;
-            instruction.delay  = 0;
             instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
-            instruction.current_time = Math.ceil(process.uptime() * 1000);
-
+ 
             if(process.env.QUEUE_ENABLED){
                 await getRepository(LightInstruction).save(instruction);
                 const frame = new Frame();

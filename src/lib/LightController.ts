@@ -15,7 +15,6 @@ export class LightController {
         this.callback = (instruction:string, data: string)=> {
             Logger.warn("Default callback used");
         }
-        setInterval(()=>{this.updateLightTimerOffets()}, parseInt(process.env.SYNC_INTERVAL) || 30000);
     }
     registerCallback(handler:(instruction: string, data: string) => void){
       this.callback = handler
@@ -30,7 +29,6 @@ export class LightController {
             if(light){ 
                 light.lastUpdated = new Date();
                 light.config = data.config || light.config;
-                light.memory = data.memory;
                 light.version = data.version
 
                 await getRepository(Light).save(light);
@@ -46,12 +44,10 @@ export class LightController {
                 newLight.sleep = 0;
                 newLight.config = data.config || {};
                 newLight.version = data.version || "-1";
-                newLight.memory = data.memory || "-1";
                 newLight.lastUpdated = new Date();
                 await getRepository(Light).save(newLight);
                 this.callback("ADD_LIGHT", JSON.stringify(newLight));
                 Logger.debug("New light created");
-                this.updateLightTimerOffets();
                 }
             return;
             case "ping":
@@ -133,10 +129,5 @@ export class LightController {
         } else {
             throw new LightNotFoundError();
         }
-    }
-    async updateLightTimerOffets(){
-        Logger.debug("Upding light timer offsets");
-        let msSinceStart = Math.ceil(process.uptime() * 1000); // milliseconds since process started
-        this.broker.publish('sync', msSinceStart.toString());
     }
   }

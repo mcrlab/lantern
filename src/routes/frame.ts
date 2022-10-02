@@ -23,9 +23,7 @@ function createFrameRoutes(broker:MQTTBroker) {
                 }
             });
             let wait = 0;
-            const time   = req.body.time   || 10;
-            const delay  = req.body.delay  || 10;
-            const easing = req.body.easing || "LinearInterpolation";
+
 
             let instructions:LightInstruction[] = [];
 
@@ -36,26 +34,17 @@ function createFrameRoutes(broker:MQTTBroker) {
                     const instruction = new LightInstruction();
                     instruction.light = lights[i];
                     instruction.color = color;
-                    instruction.easing = easing;
-                    instruction.time = time;
-                    instruction.delay = 0;
+                    
                     instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
-                    instruction.current_time = Math.ceil(process.uptime() * 1000);
+                    
                     
                     instructions.push(instruction);
 
-                    if(wait < (instruction.time )){
-                        wait = instruction.time;
-                    }
+
                     if(process.env.QUEUE_ENABLED){
                         await getRepository(LightInstruction).save(instruction);
                     }
-                    // } else {
-                    //     //if(lights[i].color !== instruction.color){
-                    //         delete instruction.light;
-                    //         broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
-                    //     //}
-                    // }
+
                 } else {
                     return;
                 }
@@ -75,8 +64,6 @@ function createFrameRoutes(broker:MQTTBroker) {
                     instructionSet.push({
                         "address": instruction.light.address,
                         "color": instruction.color,
-                        "easing": instruction.easing,
-                        "time": instruction.time,
                         "start_time": instruction.start_time
                     });
                 }
@@ -105,13 +92,8 @@ function createFrameRoutes(broker:MQTTBroker) {
                     const instruction = new LightInstruction();
                     instruction.light = light;
                     instruction.color = update.color;
-                    instruction.easing = update.easing || "LinearInterpolation";
-                    instruction.time = update.time || 0;
-                    instruction.delay = 0;
                     instructions.push(instruction);
-                    if(wait < (instruction.time)){
-                        wait = instruction.time;
-                    }
+
                     if(process.env.QUEUE_ENABLED){
                         await getRepository(LightInstruction).save(instruction);
                     } else {
