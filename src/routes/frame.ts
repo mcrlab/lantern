@@ -34,8 +34,6 @@ function createFrameRoutes(broker:MQTTBroker) {
                     instruction.light = lights[i];
                     instruction.color = color;
                     
-                    instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
-                    
                     instructions.push(instruction);
 
                     if(process.env.QUEUE_ENABLED){
@@ -50,7 +48,6 @@ function createFrameRoutes(broker:MQTTBroker) {
             frame.complete     = false;
             frame.created      = new Date();
             frame.instructions = instructions;
-            frame.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
             if(process.env.QUEUE_ENABLED){
                 await getRepository(Frame).save(frame);
             } else {
@@ -59,8 +56,7 @@ function createFrameRoutes(broker:MQTTBroker) {
                 for (const instruction of instructions){
                     instructionSet.push({
                         "address": instruction.light.address,
-                        "color": instruction.color,
-                        "start_time": instruction.start_time
+                        "color": instruction.color
                     });
                 }
 
@@ -79,8 +75,6 @@ function createFrameRoutes(broker:MQTTBroker) {
 
             const lights = await getRepository(Light).find();
             let instructions:LightInstruction[] = [];
-            let wait = 0;
-
 
             updates.map(async (update:any, i:number)=> {
                 const light = lights.find((element)=> { return element.id === update.id});

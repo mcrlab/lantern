@@ -1,5 +1,3 @@
-// address, color, version, platform, memory, x, y, sleep, last_updated, config;
-
 import {Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne} from "typeorm";
 import { Light } from "./Light";
 import { Frame } from "./Frame";
@@ -12,9 +10,6 @@ export class LightInstruction {
 
     @Column()
     color: string;
-
-    @Column()
-    start_time: number;
 
     @ManyToOne(() => Light, light => light.instructions, {
         cascade: true,

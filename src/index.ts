@@ -10,7 +10,7 @@ import mqttRouter from "./routes/mqtt";
 import * as http from 'http';
 import { WebSocket } from 'ws';
 import { Light } from "./entity/Light";
-import debugRouter from "./routes/debug";
+
 import { LightController } from "./lib/LightController";
 import createLightRoutes from "./routes/light";
 import createFrameRoutes from "./routes/frame";
@@ -45,7 +45,7 @@ const start = async ()=> {
   app.use("/mqtt", mqttRouter);
   app.use("/lights", createLightRoutes(broker, controller));
   app.use("/frames", createFrameRoutes(broker));
-  app.use("/debug", debugRouter);
+
   app.get("/",  (req, res)=> {
     res.sendFile(path.resolve(__dirname, "..","client", "build", "index.html"));
   });

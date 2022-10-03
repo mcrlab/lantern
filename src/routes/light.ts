@@ -18,42 +18,6 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
         const lights = await getRepository(Light).find();
         res.json(lights);
     })
-    .post('/', async (req: Request, res: Response) => {
-        try {
-            const color        = req.body.color;
-            const time:number  = parseInt(req.body.time, 10) || 0;
-            const lights       = await getRepository(Light).find();
-            let instructions:LightInstruction[] = [];
-    
-            for(const light of lights){
-                const instruction = new LightInstruction();
-                instruction.light = light;
-                instruction.color = color;
-                instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
-
-                if(process.env.QUEUE_ENABLED){
-                    await getRepository(LightInstruction).save(instruction);
-                    instructions.push(instruction);
-                } else {
-                    delete instruction.light;
-                    broker.publish(`color/${light.address}`, JSON.stringify(instruction));
-                }
-            }
-            if(process.env.QUEUE_ENABLED){
-                const frame = new Frame();
-                frame.complete     = false;
-                frame.created      = new Date();
-                frame.instructions = instructions;
-                await getRepository(Frame).save(frame);
-            }
-    
-            return res.json({});
-    
-          } catch(error){
-              Logger.error(error);
-              res.status(400).json(error);
-          };
-    })
     .post("/config", async (req: Request, res: Response) => {
         const config = req.body;
         broker.publish('config', JSON.stringify(config));
@@ -71,34 +35,6 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
         const light = await getRepository(Light).findOne(req.params.lightID);
         if(light) {
             res.json(light);
-        } else {
-            res.status(404).json("Light not found");
-        }
-    })
-    .post("/:lightID", async (req: Request, res: Response) => {
-    
-        const color  = req.body.color;    
-        const light = await getRepository(Light).findOne(req.params.lightID);
-        if(light){
-            const instruction = new LightInstruction();
-    
-            instruction.light  = light;
-            instruction.color  = color;
-            instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
- 
-            if(process.env.QUEUE_ENABLED){
-                await getRepository(LightInstruction).save(instruction);
-                const frame = new Frame();
-                frame.complete     = false;
-                frame.created      = new Date();
-                frame.instructions = [instruction];
-                await getRepository(Frame).save(frame);
-            } else {
-                delete instruction.light;
-                
-                broker.publish(`color/${light.address}`, JSON.stringify(instruction));
-            }
-            res.json({});
         } else {
             res.status(404).json("Light not found");
         }

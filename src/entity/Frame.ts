@@ -12,9 +12,6 @@ export class Frame {
 
     @Column()
     created: Date;
-
-    @Column()
-    start_time: number;
     
     @OneToMany(() => LightInstruction, instruction => instruction.frame, {
         cascade: true

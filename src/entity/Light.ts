@@ -1,5 +1,3 @@
-// address, color, version, platform, memory, x, y, sleep, last_updated, config;
-
 import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm";
 import { LightInstruction } from "./LightInstruction";
 

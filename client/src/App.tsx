@@ -12,10 +12,7 @@ import HighlightIcon from '@mui/icons-material/Highlight';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 import { Buffer } from 'buffer';
-import FormDialog from './Dialog';
-import { json } from 'stream/consumers';
 
-//import Dashboard from './Dashboard';
 
 interface AppProps {
 }
@@ -131,6 +128,7 @@ class App extends React.Component <AppProps, AppState>{
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
+                <TableCell>Address</TableCell>
                 <TableCell>Position</TableCell>
                 <TableCell >Version</TableCell>
                 <TableCell>Platform</TableCell>
@@ -159,7 +157,7 @@ class LightItem extends React.Component <LightItemProps, {}>{
     this.poke = this.poke.bind(this);
     this.restart = this.restart.bind(this);
     this.upgrade = this.upgrade.bind(this);
-    this.toggleDebug = this.toggleDebug.bind(this);
+
   }
 
   on(){
@@ -169,15 +167,19 @@ class LightItem extends React.Component <LightItemProps, {}>{
   }
 
   lightColor(color:any){
-    fetch(`/lights/${this.props.light.id}`,{
+    fetch(`/frames/all`,{
       method: "POST",
       headers: {
         "content-type": "application/json"
       },
       body: JSON.stringify({
-        "color": color,
-        "time": 500
-        })
+          "lights": [
+              {
+                  "id":this.props.light.id,
+                  "color": "00FF00"
+              }
+          ]
+      })
     })
     .then(response => {
       response.json();
@@ -223,24 +225,7 @@ class LightItem extends React.Component <LightItemProps, {}>{
       console.log(json);
     })
   }
-  toggleDebug(){
-    fetch(`/lights/${this.props.light.id}/config`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-      body: JSON.stringify({
-        "DEBUG": false
-      })
-    })
-    .then(response => {
-      console.log(response);
-      response.json()
-    })
-    .then(json => {
-      alert(json)
-    })
-  }
+
   deleteLight(){
     fetch(`/lights/${this.props.light.id}/delete`,{
         method: "POST",
@@ -262,15 +247,12 @@ class LightItem extends React.Component <LightItemProps, {}>{
     return (
         <TableRow key={"light"+this.props.light.id}>
           <TableCell>{this.props.light.id}</TableCell>
-
+          <TableCell>{this.props.light.address}</TableCell>
           <TableCell>{this.props.light.x}</TableCell>
           <TableCell>{this.props.light.version}</TableCell>
           <TableCell>{this.props.light.platform}</TableCell>
           <TableCell align="right">{`${this.props.light.lastUpdated}`}</TableCell>
           <TableCell>
-            <IconButton aria-label="poke" onClick={this.toggleDebug}>
-              <HighlightIcon />
-            </IconButton>
             <IconButton aria-label="poke" onClick={this.poke}>
               <HighlightIcon />
             </IconButton>
