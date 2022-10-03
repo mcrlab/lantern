@@ -7,6 +7,7 @@ import { LightInstruction } from "../entity/LightInstruction";
 import {Frame} from "../entity/Frame";
 import Logger from "../lib/logger";
 import MQTTBroker from "../lib/mqtt";
+
 function createFrameRoutes(broker:MQTTBroker) {
     const frameRouter = express.Router()
     .get('/', async (req: Request, res: Response) => {
@@ -22,8 +23,6 @@ function createFrameRoutes(broker:MQTTBroker) {
                     x: "ASC"
                 }
             });
-            let wait = 0;
-
 
             let instructions:LightInstruction[] = [];
 
@@ -37,9 +36,7 @@ function createFrameRoutes(broker:MQTTBroker) {
                     
                     instruction.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
                     
-                    
                     instructions.push(instruction);
-
 
                     if(process.env.QUEUE_ENABLED){
                         await getRepository(LightInstruction).save(instruction);
@@ -52,7 +49,6 @@ function createFrameRoutes(broker:MQTTBroker) {
             const frame        = new Frame();
             frame.complete     = false;
             frame.created      = new Date();
-            frame.wait         = wait;
             frame.instructions = instructions;
             frame.start_time = Math.ceil(process.uptime() * 1000) + parseInt(process.env.ANIMATION_OFFSET);
             if(process.env.QUEUE_ENABLED){
@@ -106,9 +102,7 @@ function createFrameRoutes(broker:MQTTBroker) {
             if(process.env.QUEUE_ENABLED){
                 const frame        = new Frame();
                 frame.complete     = false;
-                frame.wait         = 0;
                 frame.created      = new Date();
-                frame.wait = wait;
                 frame.instructions = instructions;
                 await getRepository(Frame).save(frame);
             }
