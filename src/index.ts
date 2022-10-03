@@ -6,8 +6,6 @@ import {createConnection, getRepository} from "typeorm";
 import Logger from "./lib/logger";
 import morganMiddleware from "./config/morganMiddleWare";
 import mqttRouter from "./routes/mqtt";
-import colorRouter from "./routes/color";
-
 
 import * as http from 'http';
 import { WebSocket } from 'ws';
@@ -46,7 +44,6 @@ const start = async ()=> {
 
   app.use("/mqtt", mqttRouter);
   app.use("/lights", createLightRoutes(broker, controller));
-  app.use("/colors", colorRouter);
   app.use("/frames", createFrameRoutes(broker));
   app.use("/debug", debugRouter);
   app.get("/",  (req, res)=> {

@@ -42,7 +42,6 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
             if(process.env.QUEUE_ENABLED){
                 const frame = new Frame();
                 frame.complete     = false;
-                frame.wait         = time;
                 frame.created      = new Date();
                 frame.instructions = instructions;
                 await getRepository(Frame).save(frame);
@@ -78,11 +77,7 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
     })
     .post("/:lightID", async (req: Request, res: Response) => {
     
-        const color  = req.body.color;
-        const easing = req.body.easing || "LinearInterpolation";
-        const time   = parseInt(req.body.time, 10) || 0;
-
-    
+        const color  = req.body.color;    
         const light = await getRepository(Light).findOne(req.params.lightID);
         if(light){
             const instruction = new LightInstruction();
