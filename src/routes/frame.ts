@@ -7,6 +7,7 @@ import { LightInstruction } from "../entity/LightInstruction";
 import {Frame} from "../entity/Frame";
 import Logger from "../lib/logger";
 import MQTTBroker from "../lib/mqtt";
+import { loggers } from "winston";
 
 function createFrameRoutes(broker:MQTTBroker) {
     const frameRouter = express.Router()
@@ -88,6 +89,7 @@ function createFrameRoutes(broker:MQTTBroker) {
                         await getRepository(LightInstruction).save(instruction);
                     } else {
                         delete instruction.light;
+                        Logger.info(`color/${lights[i].address}`, JSON.stringify(instruction));
                         broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
                     }
                 }
@@ -100,7 +102,6 @@ function createFrameRoutes(broker:MQTTBroker) {
                 frame.instructions = instructions;
                 await getRepository(Frame).save(frame);
             }
-
 
             return res.json({});
 

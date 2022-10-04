@@ -18,7 +18,7 @@ export default class MQTTBroker {
 
     this.client.on('connect', () => {
       Logger.info("Connected to MQTT broker");
-      this.client.subscribe('connect');
+      this.client.subscribe('register');
       this.client.subscribe('ping');
     });
 
@@ -29,19 +29,19 @@ export default class MQTTBroker {
 
     this.client
         .on('close', () => {
-            Logger.warn('close');
+            Logger.warn('Closing MQTT Broker connection');
         });
     this.client
         .on('reconnect', () => {
-            Logger.warn('reconnect');
+            Logger.warn('Reconnecting to MQTT Broker');
         });
     this.client
         .on('offline', () => {
-            Logger.error('offline');
+            Logger.error('Offline Broker connection');
         });
     this.client
         .on('error', (error) => {
-            Logger.error('error', error);
+            Logger.error('MQTT Error', error);
         });
 
   }

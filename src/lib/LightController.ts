@@ -25,39 +25,39 @@ export class LightController {
         const light = await getRepository(Light).findOne({"address":data.id});
 
         switch(topic){
-            case "connect":
-            if(light){ 
-                light.lastUpdated = new Date();
-                light.config = data.config || light.config;
-                light.version = data.version
+            case "register":
+                if(light){ 
+                    light.lastUpdated = new Date();
+                    light.config = data.config || light.config;
+                    light.version = data.version
 
-                await getRepository(Light).save(light);
-                this.callback("UPDATE_LIGHT", JSON.stringify(light));
-                Logger.debug(`Light ${light.address} connected`);
-                } else {
-                const newLight = new Light();
-                newLight.name = "Light";
-                newLight.address = data.id;
-                newLight.color = "000000";
-                newLight.platform = data.platform || "unknown";
-                newLight.x = 0;
-                newLight.sleep = 0;
-                newLight.config = data.config || {};
-                newLight.version = data.version || "-1";
-                newLight.lastUpdated = new Date();
-                await getRepository(Light).save(newLight);
-                this.callback("ADD_LIGHT", JSON.stringify(newLight));
-                Logger.debug("New light created");
-                }
-            return;
+                    await getRepository(Light).save(light);
+                    this.callback("UPDATE_LIGHT", JSON.stringify(light));
+                    Logger.debug(`Light ${light.address} registered`);
+                    } else {
+                    const newLight = new Light();
+                    newLight.name = "Light";
+                    newLight.address = data.id;
+                    newLight.color = "000000";
+                    newLight.platform = data.platform || "unknown";
+                    newLight.x = 0;
+                    newLight.sleep = 0;
+                    newLight.config = data.config || {};
+                    newLight.version = data.version || "-1";
+                    newLight.lastUpdated = new Date();
+                    await getRepository(Light).save(newLight);
+                    this.callback("ADD_LIGHT", JSON.stringify(newLight));
+                    Logger.debug("New light created");
+                    }
+                return;
             case "ping":
-            if(light){
-                light.lastUpdated = new Date();
-                light.color = data.color;
-                await getRepository(Light).save(light);
-                this.callback("UPDATE_LIGHT", JSON.stringify(light));
-                Logger.debug(`Light ${light.address} pinged`);
-                }
+                if(light){
+                    light.lastUpdated = new Date();
+                    light.color = data.color;
+                    await getRepository(Light).save(light);
+                    this.callback("UPDATE_LIGHT", JSON.stringify(light));
+                    Logger.debug(`Light ${light.address} pinged`);
+                    }
             default:
             return;
         }
