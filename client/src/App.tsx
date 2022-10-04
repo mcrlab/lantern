@@ -176,7 +176,7 @@ class LightItem extends React.Component <LightItemProps, {}>{
           "lights": [
               {
                   "id":this.props.light.id,
-                  "color": "00FF00"
+                  "color": color
               }
           ]
       })

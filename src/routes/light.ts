@@ -3,12 +3,8 @@ import {Request, Response} from 'express';
 import "reflect-metadata";
 import { getRepository } from "typeorm";
 import { Light } from "../entity/Light";
-import { LightInstruction } from "../entity/LightInstruction";
-import { Frame } from "../entity/Frame";
 import MQTTBroker from "../lib/mqtt";
 
-
-import Logger from "../lib/logger";
 import { LightController } from "../lib/LightController";
 
 
