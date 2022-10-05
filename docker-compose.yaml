@@ -7,12 +7,11 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-      target: development
+      target: production
     networks:
       - lantern-network 
     ports:
-      - 3000:3000
-    command: ["npm", "start"]
+      - 80:80
   api:
     build:
       context: ./api
@@ -20,7 +19,7 @@ services:
     networks:
       - lantern-network 
     ports:
-      - 80:8080
+      - 8080:8080
     restart: always
     environment:
       MQTT_URL: "mqtt://lantern:ilovelamp@mqtt:1883"

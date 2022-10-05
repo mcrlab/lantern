@@ -33,7 +33,7 @@ interface Config {
 interface Light {
   x: number,
   y: Number,
-  id: Number,
+  id: number,
   address: String,
   name: String,
   color: String,
