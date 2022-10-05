@@ -21,7 +21,8 @@ function createFrameRoutes(broker:MQTTBroker) {
 
             const lights = await getRepository(Light).find({
                 order: {
-                    x: "ASC"
+                    x: "ASC",
+                    id: "ASC"
                 }
             });
 
@@ -39,29 +40,19 @@ function createFrameRoutes(broker:MQTTBroker) {
 
                     if(process.env.QUEUE_ENABLED){
                         await getRepository(LightInstruction).save(instruction);
+                    } else {
+                        delete instruction.light;
+                        broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
                     }
 
-                } else {
-                    return;
                 }
             });
-            const frame        = new Frame();
-            frame.complete     = false;
-            frame.created      = new Date();
-            frame.instructions = instructions;
             if(process.env.QUEUE_ENABLED){
+                const frame        = new Frame();
+                frame.complete     = false;
+                frame.created      = new Date();
+                frame.instructions = instructions;
                 await getRepository(Frame).save(frame);
-            } else {
-
-                let instructionSet = []
-                for (const instruction of instructions){
-                    instructionSet.push({
-                        "address": instruction.light.address,
-                        "color": instruction.color
-                    });
-                }
-
-                broker.publish('frame', JSON.stringify(instructionSet))
             }
             return res.json({});
 
@@ -89,8 +80,7 @@ function createFrameRoutes(broker:MQTTBroker) {
                         await getRepository(LightInstruction).save(instruction);
                     } else {
                         delete instruction.light;
-                        Logger.info(`color/${lights[i].address}`, JSON.stringify(instruction));
-                        broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
+                        broker.publish(`color/${light.address}`, JSON.stringify(instruction));
                     }
                 }
             });

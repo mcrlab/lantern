@@ -11,7 +11,12 @@ import { LightController } from "../lib/LightController";
 function createLightRoutes(broker: MQTTBroker, controller: LightController){
     const lightRouter = express.Router()
     .get('/', async (req: Request, res: Response) => {
-        const lights = await getRepository(Light).find();
+        const lights = await getRepository(Light).find( {
+            order: {
+              x: "ASC",
+              id: "ASC"
+            }
+        });
         res.json(lights);
     })
     .post("/config", async (req: Request, res: Response) => {
@@ -38,9 +43,8 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
     .post("/:lightID/position", async(req: Request, res: Response) => {
         const lightId = parseInt(req.params.lightID, 10);
         const x = parseInt(req.body.x, 10);
-        const y = parseInt(req.body.y, 10);
         try {
-            await controller.updateLightPosition(lightId, x, y);
+            await controller.updateLightPosition(lightId, x);
             res.send({});
         } catch (error){
             res.status(error.status|| 400).json(error);

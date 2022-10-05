@@ -54,7 +54,12 @@ const start = async ()=> {
   const wss = new WebSocket.Server({ server });
 
   wss.on('connection', async (ws) => {
-    const data = await getRepository(Light).find();
+    const data = await getRepository(Light).find( {
+      order: {
+        x: "ASC",
+        id: "ASC"
+      }
+    });
     ws.send(JSON.stringify(
       {
         "instruction": "ALL_LIGHTS",

@@ -99,11 +99,12 @@ export class LightController {
         }
     }
 
-    async updateLightPosition(lightId: number, x:number, y:number){
+    async updateLightPosition(lightId: number, x:number){
         Logger.debug("Update light position");
         const light = await getRepository(Light).findOne(lightId);
         if(light){
             light.x = x || 0;
+            light.lastUpdated = new Date();
             await getRepository(Light).save(light);
             this.callback("UPDATE_LIGHT", JSON.stringify(light));
         } else {
