@@ -1,6 +1,18 @@
 version: "3"
 
 services:
+  client:
+    container_name: client
+    image: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      target: development
+    networks:
+      - lantern-network 
+    ports:
+      - 3000:3000
+    command: ["npm", "start"]
   api:
     build:
       context: ./api

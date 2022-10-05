@@ -15,7 +15,7 @@ import { LightController } from "./lib/LightController";
 import createLightRoutes from "./routes/light";
 import createFrameRoutes from "./routes/frame";
 import MQTTBroker from "./lib/mqtt";
-import * as path from "path";
+// import * as path from "path";
 
 const start = async ()=> {
   dotenv.config();
@@ -46,9 +46,9 @@ const start = async ()=> {
   app.use("/lights", createLightRoutes(broker, controller));
   app.use("/frames", createFrameRoutes(broker));
 
-  app.get("/",  (req, res)=> {
-    res.sendFile(path.resolve(__dirname, "..","client", "build", "index.html"));
-  });
+  // app.get("/",  (req, res)=> {
+  //   res.sendFile(path.resolve(__dirname, "..","client", "build", "index.html"));
+  // });
 
   const server = http.createServer(app);
   const wss = new WebSocket.Server({ server });
