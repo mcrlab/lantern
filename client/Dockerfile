@@ -1,4 +1,4 @@
-FROM node:14-alpine AS builder
+FROM node:17 AS builder
 ENV NODE_ENV development
 
 # Add a work directory
