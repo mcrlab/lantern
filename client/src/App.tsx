@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import LightItem from './LightItem'
 import Light from './Light';
+import Dashboard from './dashboard/Dashboard';
 
 interface AppProps {
 }
@@ -97,22 +98,7 @@ class App extends React.Component <AppProps, AppState>{
 
     return (
         <React.Fragment>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Position</TableCell>
-                <TableCell >Version</TableCell>
-                <TableCell>Platform</TableCell>
-                <TableCell align="right">Last Updated</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {list}
-            </TableBody>
-          </Table>
+          <Dashboard lights={this.state.lights} />
         </React.Fragment>
     );
   }
