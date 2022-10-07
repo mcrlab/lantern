@@ -7,7 +7,7 @@ import { LightInstruction } from "../entity/LightInstruction";
 import {Frame} from "../entity/Frame";
 import Logger from "../lib/logger";
 import MQTTBroker from "../lib/mqtt";
-import { loggers } from "winston";
+
 
 function createFrameRoutes(broker:MQTTBroker) {
     const frameRouter = express.Router()
@@ -36,24 +36,11 @@ function createFrameRoutes(broker:MQTTBroker) {
                     instruction.light = lights[i];
                     instruction.color = color;
                     
-                    instructions.push(instruction);
-
-                    if(process.env.QUEUE_ENABLED){
-                        await getRepository(LightInstruction).save(instruction);
-                    } else {
-                        delete instruction.light;
-                        broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
-                    }
-
+                    delete instruction.light;
+                    broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
+                
                 }
             });
-            if(process.env.QUEUE_ENABLED){
-                const frame        = new Frame();
-                frame.complete     = false;
-                frame.created      = new Date();
-                frame.instructions = instructions;
-                await getRepository(Frame).save(frame);
-            }
             return res.json({});
 
         } catch(error){
@@ -75,23 +62,12 @@ function createFrameRoutes(broker:MQTTBroker) {
                     instruction.light = light;
                     instruction.color = update.color;
                     instructions.push(instruction);
-
-                    if(process.env.QUEUE_ENABLED){
-                        await getRepository(LightInstruction).save(instruction);
-                    } else {
-                        delete instruction.light;
-                        broker.publish(`color/${light.address}`, JSON.stringify(instruction));
-                    }
+                    delete instruction.light;
+                    broker.publish(`color/${light.address}`, JSON.stringify(instruction));
                 }
             });
 
-            if(process.env.QUEUE_ENABLED){
-                const frame        = new Frame();
-                frame.complete     = false;
-                frame.created      = new Date();
-                frame.instructions = instructions;
-                await getRepository(Frame).save(frame);
-            }
+
 
             return res.json({});
 
