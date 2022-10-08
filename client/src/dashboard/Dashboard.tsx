@@ -19,7 +19,6 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
 import LightTable from './LightTable';
-import Deposits from './Deposits';
 import LightArray from '../LightArray';
 function Copyright(props: any) {
   return (
@@ -87,7 +86,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme();
 
 function DashboardContent(props:LightArray) {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -171,8 +170,8 @@ function DashboardContent(props:LightArray) {
                   <LightTable lights={props.lights}/>
                 </Paper>
               </Grid>
+              { /*
 
-                           {/* Chart */}
                            <Grid item xs={12} md={8} lg={9}>
                 <Paper
                   sx={{
@@ -185,7 +184,7 @@ function DashboardContent(props:LightArray) {
                   
                 </Paper>
               </Grid>
-              {/* Recent Deposits */}
+
               <Grid item xs={12} md={4} lg={3}>
                 <Paper
                   sx={{
@@ -197,7 +196,8 @@ function DashboardContent(props:LightArray) {
                 >
                   <Deposits />
                 </Paper>
-              </Grid>
+              </Grid>    
+        */}
 
             </Grid>
             <Copyright sx={{ pt: 4 }} />
