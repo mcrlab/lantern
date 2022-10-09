@@ -1,35 +1,41 @@
 import React from 'react';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
-
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import LightItem from './LightItem'
 import Light from './Light';
 import Dashboard from './dashboard/Dashboard';
 
 interface AppProps {
 }
 interface AppState {
-  lights: Array<Light>
+  lights: Array<Light>,
+  connected: Boolean,
+  socket?: W3CWebSocket
 }
-
-const client = new W3CWebSocket(`ws://${window.location.hostname}/lights`);
 
 class App extends React.Component <AppProps, AppState>{
   constructor(props: any){
     super(props);
     this.state = {
-      lights: []
+      lights: [],
+      connected: true
     }
+    this.connect = this.connect.bind(this);
+    this.check = this.check.bind(this);
   }
 
-  componentWillMount(){
+  check (){
+    const { socket } = this.state;
+    if (!socket || socket.readyState == WebSocket.CLOSED) this.connect(); //check if websocket instance is closed, if so call `connect` function.
 
+  }
+
+  connect(){
+    var client = new W3CWebSocket(`ws://${window.location.hostname}/lights`);
+    var connectInterval:any;
+    var that = this;
     client.onopen = () => {
       console.log('WebSocket Client Connected');
+      this.setState({socket:client, connected:true});
+      clearInterval(connectInterval);
     };
 
     client.onmessage = (message) => {
@@ -87,18 +93,28 @@ class App extends React.Component <AppProps, AppState>{
           break;
       }
     }
+    client.onerror = function() {
+      console.log('Connection Error');
+      client.close();
+    };
+
+    client.onclose = function(){
+      console.log("Disconnected");
+      that.setState({
+        connected:false
+      });
+      connectInterval = setTimeout(that.check, Math.min(10000, 250));
+    }
+  }
+
+  componentDidMount(){  
+    this.connect();
   }
 
   render(){
-    let list:any = [];
-    this.state.lights.forEach((light:Light) => {
-      list.push((<LightItem key={`light_${light.id}`} light={light} />))
-    });
-
-
     return (
         <React.Fragment>
-          <Dashboard lights={this.state.lights} />
+          <Dashboard lights={this.state.lights} connected={this.state.connected} />
         </React.Fragment>
     );
   }

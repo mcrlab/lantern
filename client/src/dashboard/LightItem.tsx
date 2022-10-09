@@ -9,7 +9,9 @@ import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import { Buffer } from 'buffer';
-import Light from './Light'
+import Light from '../Light'
+import AlertDialog from './confirmation';
+
 
 interface LightItemProps {
     light: Light
@@ -168,15 +170,18 @@ interface LightItemProps {
               <IconButton aria-label="poke" onClick={this.poke}>
                 <HighlightIcon />
               </IconButton>
-              <IconButton aria-label="restart" onClick={this.restart}>
-                <RestartAltIcon />
-              </IconButton>
-              <IconButton aria-label="Upgrade" onClick={this.upgrade}>
-                <SystemUpdateAltIcon />
-              </IconButton>
-              <IconButton aria-label="delete" onClick={this.deleteLight}>
+
+              <AlertDialog title={"Restart Light"} body={"Do you want to restart light "+this.props.light.id} confirmCB={this.restart}>
+              <RestartAltIcon />
+              </AlertDialog>
+
+              <AlertDialog title={"Update Light"} body={"Do you want to update the firmware for light "+this.props.light.id} confirmCB={this.upgrade}>
+              <SystemUpdateAltIcon />
+              </AlertDialog>
+
+              <AlertDialog title={"Remove Light"} body={"Do you want to delete light "+this.props.light.id} confirmCB={this.deleteLight}>
                 <DeleteIcon />
-              </IconButton>
+              </AlertDialog>
             </TableCell>
           </TableRow>
         )

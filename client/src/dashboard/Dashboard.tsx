@@ -20,6 +20,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
 import LightTable from './LightTable';
 import LightArray from '../LightArray';
+import Light from '../Light';
+
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -85,7 +87,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-function DashboardContent(props:LightArray) {
+interface DashboardProps {
+  lights:Light[],
+  connected: Boolean
+}
+
+function DashboardContent(props:DashboardProps) {
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -123,9 +130,11 @@ function DashboardContent(props:LightArray) {
               Dashboard
             </Typography>
             <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
+              {props.connected && 
+                <Badge badgeContent={props.lights.length} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              }
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -170,35 +179,6 @@ function DashboardContent(props:LightArray) {
                   <LightTable lights={props.lights}/>
                 </Paper>
               </Grid>
-              { /*
-
-                           <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  
-                </Paper>
-              </Grid>
-
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>    
-        */}
-
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>
@@ -209,6 +189,6 @@ function DashboardContent(props:LightArray) {
 }
 
 
-export default function Dashboard(props:LightArray) {
-  return <DashboardContent lights={props.lights}/>;
+export default function Dashboard(props:DashboardProps) {
+  return <DashboardContent lights={props.lights} connected={props.connected}/>;
 }

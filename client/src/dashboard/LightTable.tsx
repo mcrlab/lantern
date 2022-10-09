@@ -6,7 +6,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from './Title';
 import LightArray from '../LightArray';
-import LightItem from '../LightItem';
+import LightItem from './LightItem';
 
 
 export default function LightTable(props:LightArray) {
