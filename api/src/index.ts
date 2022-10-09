@@ -13,7 +13,7 @@ import { Light } from "./entity/Light";
 
 import { LightController } from "./lib/LightController";
 import createLightRoutes from "./routes/light";
-import createFrameRoutes from "./routes/frame";
+import createDisplayRoutes from "./routes/display";
 import MQTTBroker from "./lib/mqtt";
 
 
@@ -35,7 +35,7 @@ const start = async ()=> {
 
   app.use("/mqtt", mqttRouter);
   app.use("/lights", createLightRoutes(broker, controller));
-  app.use("/frames", createFrameRoutes(broker));
+  app.use("/display", createDisplayRoutes(broker));
 
   const server = http.createServer(app);
   const wss = new WebSocket.Server({ server });

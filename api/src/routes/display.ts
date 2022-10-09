@@ -9,7 +9,7 @@ import Logger from "../lib/logger";
 import MQTTBroker from "../lib/mqtt";
 
 
-function createFrameRoutes(broker:MQTTBroker) {
+function createDisplayRoutes(broker:MQTTBroker) {
     const frameRouter = express.Router()
     .get('/', async (req: Request, res: Response) => {
         const data = await getRepository(Frame).find();
@@ -79,5 +79,5 @@ function createFrameRoutes(broker:MQTTBroker) {
     return frameRouter;
 }
 
-export default createFrameRoutes;
+export default createDisplayRoutes;
 

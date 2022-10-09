@@ -71,7 +71,7 @@ interface LightItemProps {
     }
   
     lightColor(color:any){
-      fetch(`/frames/all`,{
+      fetch(`/display/all`,{
         method: "POST",
         headers: {
           "content-type": "application/json"
