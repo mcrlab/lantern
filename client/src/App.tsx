@@ -2,6 +2,9 @@ import React from 'react';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import Light from './Light';
 import Dashboard from './dashboard/Dashboard';
+import {
+  BrowserRouter,
+} from "react-router-dom";
 
 interface AppProps {
 }
@@ -114,7 +117,9 @@ class App extends React.Component <AppProps, AppState>{
   render(){
     return (
         <React.Fragment>
-          <Dashboard lights={this.state.lights} connected={this.state.connected} />
+          <BrowserRouter>
+            <Dashboard lights={this.state.lights} connected={this.state.connected} />
+          </BrowserRouter>
         </React.Fragment>
     );
   }

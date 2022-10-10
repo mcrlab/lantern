@@ -19,8 +19,16 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
 import LightTable from './LightTable';
-import LightArray from '../LightArray';
 import Light from '../Light';
+import Customers from './Customers';
+import Reports from './Reports';
+import Integrations from './Integrations';
+
+import {
+  Routes,
+  Route,
+} from "react-router-dom";
+
 
 function Copyright(props: any) {
   return (
@@ -174,9 +182,16 @@ function DashboardContent(props:DashboardProps) {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
 
+          
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <LightTable lights={props.lights}/>
+                <Routes>
+                  <Route path="/" element={<LightTable lights={props.lights}/>}></Route>
+                  <Route path="/customers" element={<Customers />}></Route>
+                  <Route path="/reports" element={<Reports />}></Route>
+                  <Route path="/integrations" element={<Integrations />}></Route>
+                </Routes>
+                 
                 </Paper>
               </Grid>
             </Grid>
