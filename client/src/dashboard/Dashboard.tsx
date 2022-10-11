@@ -21,8 +21,6 @@ import { mainListItems } from './listItems';
 import LightTable from './LightTable';
 import Light from '../Light';
 import Display from './Display';
-import Reports from './Reports';
-import Integrations from './Integrations';
 
 import {
   Routes,
@@ -188,8 +186,6 @@ function DashboardContent(props:DashboardProps) {
                 <Routes>
                   <Route path="/" element={<LightTable lights={props.lights}/>}></Route>
                   <Route path="/display" element={<Display lights={props.lights} />}></Route>
-                  <Route path="/reports" element={<Reports />}></Route>
-                  <Route path="/integrations" element={<Integrations />}></Route>
                 </Routes>
                  
                 </Paper>

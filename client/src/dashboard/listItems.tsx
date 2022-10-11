@@ -27,21 +27,5 @@ export const mainListItems = (
         <ListItemText primary="Display" />
       </ListItemButton>
     </Link>
-    <Link to="/reports">
-    <ListItemButton>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Reports" />
-    </ListItemButton>
-    </Link>
-    <Link to="/integrations">
-    <ListItemButton>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
-    </ListItemButton>
-    </Link>
   </React.Fragment>
 );
