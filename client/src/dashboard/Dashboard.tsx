@@ -20,7 +20,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
 import LightTable from './LightTable';
 import Light from '../Light';
-import Customers from './Customers';
+import Display from './Display';
 import Reports from './Reports';
 import Integrations from './Integrations';
 
@@ -187,7 +187,7 @@ function DashboardContent(props:DashboardProps) {
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                 <Routes>
                   <Route path="/" element={<LightTable lights={props.lights}/>}></Route>
-                  <Route path="/customers" element={<Customers />}></Route>
+                  <Route path="/display" element={<Display lights={props.lights} />}></Route>
                   <Route path="/reports" element={<Reports />}></Route>
                   <Route path="/integrations" element={<Integrations />}></Route>
                 </Routes>

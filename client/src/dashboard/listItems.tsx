@@ -7,6 +7,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import {Link} from "react-router-dom";
+import ColorLensIcon from '@mui/icons-material/ColorLens';
 
 export const mainListItems = (
   <React.Fragment>
@@ -18,12 +19,12 @@ export const mainListItems = (
         <ListItemText primary="Lights" />
       </ListItemButton>
     </Link>
-    <Link to="/customers">
+    <Link to="/display">
       <ListItemButton>
         <ListItemIcon>
-          <PeopleIcon />
+          <ColorLensIcon />
         </ListItemIcon>
-        <ListItemText primary="Customers" />
+        <ListItemText primary="Display" />
       </ListItemButton>
     </Link>
     <Link to="/reports">
