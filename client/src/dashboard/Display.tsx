@@ -19,7 +19,7 @@ export default class Display extends React.Component <DisplayProps, {}> {
   color(color:string){
     let colors:string[] = [];
     this.props.lights.map((light:Light)=>{
-      colors.push("00FF00")
+      colors.push(color)
     });
     fetch(`/display`,{
       method: "POST",
