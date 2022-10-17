@@ -26,8 +26,6 @@ function createDisplayRoutes(broker:MQTTBroker) {
                 }
             });
 
-            let instructions:LightInstruction[] = [];
-
             colors.map(async (color:string, i:number)=> {
                 
                 if(lights[i]){
@@ -41,6 +39,26 @@ function createDisplayRoutes(broker:MQTTBroker) {
                 
                 }
             });
+            return res.json({});
+
+        } catch(error){
+            Logger.error(error);
+            res.status(400).json(error || "Oops something went wrong");
+        };
+    })
+    .post('/color', async (req, res) => {
+        try {
+            const color = req.body.color;
+
+            const lights = await getRepository(Light).find();
+
+            lights.map(async (light: Light)=> {
+                const instruction = new LightInstruction();
+                instruction.color = color;
+                delete instruction.light;
+                broker.publish(`color/${light.address}`, JSON.stringify(instruction))
+            });
+
             return res.json({});
 
         } catch(error){
