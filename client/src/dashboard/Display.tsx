@@ -16,16 +16,18 @@ export default class Display extends React.Component <DisplayProps, {}> {
     super(props);
     this.color = this.color.bind(this);
   }
-  color(){
+  color(color:string){
+    let colors:string[] = [];
+    this.props.lights.map((light:Light)=>{
+      colors.push("00FF00")
+    });
     fetch(`/display`,{
       method: "POST",
       headers: {
         "content-type": "application/json"
       },
       body: JSON.stringify({
-          "colors":[  
-           "FFFFFF"
-          ]
+          "colors": colors
         })
     })
     .then(response => {
@@ -39,8 +41,9 @@ export default class Display extends React.Component <DisplayProps, {}> {
     return (
       <React.Fragment>
         <Title>Display</Title>
-        {this.props.lights.length}
-        <Button onClick={this.color}>James</Button>
+        <Button onClick={()=>{this.color("FF0000")}}>Red</Button>
+        <Button onClick={()=>{this.color("00FF00")}}>Green</Button>
+        <Button onClick={()=>{this.color("0000FF")}}>Blue</Button>
       </React.Fragment>
     );
   }
