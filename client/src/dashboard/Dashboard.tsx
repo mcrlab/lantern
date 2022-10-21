@@ -17,11 +17,12 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import { mainListItems } from './listItems';
 import LightTable from './LightTable';
 import Light from '../Light';
 import Display from './Display';
-
+import Animation from './Animation';
 import {
   Routes,
   Route,
@@ -138,7 +139,7 @@ function DashboardContent(props:DashboardProps) {
             <IconButton color="inherit">
               {props.connected && 
                 <Badge badgeContent={props.lights.length} color="secondary">
-                  <NotificationsIcon />
+                  <LightbulbIcon />
                 </Badge>
               }
             </IconButton>
@@ -186,6 +187,7 @@ function DashboardContent(props:DashboardProps) {
                 <Routes>
                   <Route path="/" element={<LightTable lights={props.lights}/>}></Route>
                   <Route path="/display" element={<Display lights={props.lights} />}></Route>
+                  <Route path="/animation" element={<Animation lights={props.lights} />}></Route>
                 </Routes>
                  
                 </Paper>

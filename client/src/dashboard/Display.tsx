@@ -1,9 +1,4 @@
 import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Title from './Title';
 import Light from '../Light';
 import Button from '@mui/material/Button';
@@ -17,9 +12,8 @@ export default class Display extends React.Component <DisplayProps, {}> {
     this.color = this.color.bind(this);
   }
   color(color:string){
-    let colors:string[] = [];
-    this.props.lights.map((light:Light)=>{
-      colors.push(color)
+    let colors:string[] = this.props.lights.map((light:Light)=>{
+      return color
     });
     fetch(`/display`,{
       method: "POST",

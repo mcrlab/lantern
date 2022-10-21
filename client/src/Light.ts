@@ -18,7 +18,7 @@ interface Light {
     platform: String,
     memory: Number,
     sleep: Number,
-    lastUpdated: String,
+    lastUpdated: string,
     config: Config
   }
   export default Light

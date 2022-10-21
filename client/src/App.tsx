@@ -27,7 +27,7 @@ class App extends React.Component <AppProps, AppState>{
 
   check (){
     const { socket } = this.state;
-    if (!socket || socket.readyState == WebSocket.CLOSED) this.connect(); //check if websocket instance is closed, if so call `connect` function.
+    if (!socket || socket.readyState === WebSocket.CLOSED) this.connect(); //check if websocket instance is closed, if so call `connect` function.
 
   }
 

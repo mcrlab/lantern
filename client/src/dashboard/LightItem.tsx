@@ -150,6 +150,9 @@ interface LightItemProps {
     }
   
     render(): React.ReactNode {
+
+
+      
       return (
           <TableRow key={"light"+this.props.light.id}>
             <TableCell>{this.props.light.id}</TableCell>
@@ -165,7 +168,7 @@ interface LightItemProps {
               </TableCell>
             <TableCell>{this.props.light.version}</TableCell>
             <TableCell>{this.props.light.platform}</TableCell>
-            <TableCell align="right">{`${this.props.light.lastUpdated}`}</TableCell>
+            <TableCell align="right">{new Date(this.props.light.lastUpdated).toLocaleTimeString('en-US')}</TableCell>
             <TableCell>
               <IconButton aria-label="poke" onClick={this.poke}>
                 <HighlightIcon />
