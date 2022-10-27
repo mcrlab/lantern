@@ -5,12 +5,22 @@ import Dashboard from './dashboard/Dashboard';
 import {
   BrowserRouter,
 } from "react-router-dom";
+import { Button } from '@mui/material';
+
+
+
+interface SnackbarMessage {
+  message: string;
+  key: number;
+}
 
 interface AppProps {
+  handleClick: any
 }
 interface AppState {
   lights: Array<Light>,
-  connected: Boolean,
+  connected: boolean,
+  open: boolean,
   socket?: W3CWebSocket
 }
 
@@ -19,7 +29,8 @@ class App extends React.Component <AppProps, AppState>{
     super(props);
     this.state = {
       lights: [],
-      connected: true
+      connected: true,
+      open: false
     }
     this.connect = this.connect.bind(this);
     this.check = this.check.bind(this);
@@ -39,6 +50,8 @@ class App extends React.Component <AppProps, AppState>{
       console.log('WebSocket Client Connected');
       this.setState({socket:client, connected:true});
       clearInterval(connectInterval);
+      this.props.handleClick("Connected");
+      
     };
 
     client.onmessage = (message) => {
@@ -51,6 +64,7 @@ class App extends React.Component <AppProps, AppState>{
           dataFromServer.data.lights.forEach((lightData:Light)=>{
             allLights.push(lightData);
           });
+          this.props.handleClick("Lights loaded");
 
           this.setState({
             lights: allLights
@@ -76,6 +90,7 @@ class App extends React.Component <AppProps, AppState>{
 
           lights.push( light );
           lights.sort((a, b) => (a.x > b.x) ? 1 : -1);
+          this.props.handleClick("Light added");
           this.setState({
             lights: lights
           });
@@ -87,6 +102,7 @@ class App extends React.Component <AppProps, AppState>{
           let updateLights:Array<Light> = lights.filter((light:Light) => {
             return (light.address !== lightToRemove.address);
           });
+          this.props.handleClick("Light removed");
           this.setState({
             lights: updateLights
           });
@@ -103,6 +119,7 @@ class App extends React.Component <AppProps, AppState>{
 
     client.onclose = function(){
       console.log("Disconnected");
+      that.props.handleClick("Disconnected");
       that.setState({
         connected:false
       });
@@ -111,14 +128,16 @@ class App extends React.Component <AppProps, AppState>{
   }
 
   componentDidMount(){  
+    console.log("Mounting")
     this.connect();
   }
 
   render(){
+
     return (
         <React.Fragment>
           <BrowserRouter>
-            <Dashboard lights={this.state.lights} connected={this.state.connected} />
+             <Dashboard lights={this.state.lights} connected={this.state.connected} />
           </BrowserRouter>
         </React.Fragment>
     );

@@ -96,7 +96,8 @@ const mdTheme = createTheme();
 
 interface DashboardProps {
   lights:Light[],
-  connected: Boolean
+  connected: Boolean,
+  open?: Boolean
 }
 
 function DashboardContent(props:DashboardProps) {
@@ -181,9 +182,9 @@ function DashboardContent(props:DashboardProps) {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
 
-          
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                  
                 <Routes>
                   <Route path="/" element={<LightTable lights={props.lights}/>}></Route>
                   <Route path="/display" element={<Display lights={props.lights} />}></Route>
@@ -193,6 +194,7 @@ function DashboardContent(props:DashboardProps) {
                 </Paper>
               </Grid>
             </Grid>
+            
             <Copyright sx={{ pt: 4 }} />
           </Container>
         </Box>

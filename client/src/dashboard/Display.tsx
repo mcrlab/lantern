@@ -11,25 +11,21 @@ export default class Display extends React.Component <DisplayProps, {}> {
     super(props);
     this.color = this.color.bind(this);
   }
-  color(color:string){
+  
+  async color(color:string){
     let colors:string[] = this.props.lights.map((light:Light)=>{
       return color
     });
-    fetch(`/display`,{
+    let response = await fetch(`/display/color`,{
       method: "POST",
       headers: {
         "content-type": "application/json"
       },
       body: JSON.stringify({
-          "colors": colors
+          "color": color
         })
-    })
-    .then(response => {
-      response.json();
-    })
-    .then(json => {
-      console.log(json)
     });
+    
   }
   render(){
     return (

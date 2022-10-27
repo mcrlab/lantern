@@ -27,7 +27,7 @@ export default function LightTable(props:LightArray) {
     </TableHead>
         <TableBody>
           {props.lights.map((light) => (
-            <LightItem light={light} />
+            <LightItem key={light.id} light={light} />
           ))}
         </TableBody>
       </Table>

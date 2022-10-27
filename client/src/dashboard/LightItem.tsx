@@ -11,6 +11,7 @@ import TableCell from '@mui/material/TableCell';
 import { Buffer } from 'buffer';
 import Light from '../Light'
 import AlertDialog from './confirmation';
+import ConfigForm from './ConfigForm';
 
 
 interface LightItemProps {
@@ -181,7 +182,9 @@ interface LightItemProps {
               <AlertDialog title={"Update Light"} body={"Do you want to update the firmware for light "+this.props.light.id} confirmCB={this.upgrade}>
               <SystemUpdateAltIcon />
               </AlertDialog>
-
+              <ConfigForm title={"Light Config"} light={this.props.light} confirmCB={()=>{}}>
+                <SystemUpdateAltIcon />
+              </ConfigForm>
               <AlertDialog title={"Remove Light"} body={"Do you want to delete light "+this.props.light.id} confirmCB={this.deleteLight}>
                 <DeleteIcon />
               </AlertDialog>
