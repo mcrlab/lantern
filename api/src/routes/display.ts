@@ -7,7 +7,7 @@ import { LightInstruction } from "../entity/LightInstruction";
 import {Frame} from "../entity/Frame";
 import Logger from "../lib/logger";
 import MQTTBroker from "../lib/mqtt";
-
+import validateColor from "../validators/color_validator";
 
 function createDisplayRoutes(broker:MQTTBroker) {
     const frameRouter = express.Router()
@@ -25,7 +25,9 @@ function createDisplayRoutes(broker:MQTTBroker) {
                     id: "ASC"
                 }
             });
-
+            colors.map((color:string, index:number) => {
+                validateColor(color);
+            });
             colors.map(async (color:string, i:number)=> {
                 
                 if(lights[i]){
@@ -48,12 +50,13 @@ function createDisplayRoutes(broker:MQTTBroker) {
     })
     .post('/color', async (req, res) => {
         try {
-            const color = req.body.color;
+            const color = validateColor(req.body.color);
 
             const lights = await getRepository(Light).find();
 
             lights.map(async (light: Light)=> {
                 const instruction = new LightInstruction();
+                instruction.light = light;
                 instruction.color = color;
                 delete instruction.light;
                 broker.publish(`color/${light.address}`, JSON.stringify(instruction))
@@ -69,7 +72,9 @@ function createDisplayRoutes(broker:MQTTBroker) {
     .post("/all", async (req: Request, res: Response)=> {
         try {
             const updates = req.body.lights;
-
+            updates.map((update:any, index:number)=>{
+                validateColor(update.color);
+            });
             const lights = await getRepository(Light).find();
             let instructions:LightInstruction[] = [];
 
