@@ -33,9 +33,9 @@ const start = async ()=> {
   app.use(helmet());
   app.use(express.json());
 
-  app.use("/mqtt", mqttRouter);
-  app.use("/lights", createLightRoutes(broker, controller));
-  app.use("/display", createDisplayRoutes(broker));
+  app.use("/api/mqtt", mqttRouter);
+  app.use("/api/lights", createLightRoutes(broker, controller));
+  app.use("/api/display", createDisplayRoutes(broker));
 
   const server = http.createServer(app);
   const wss = new WebSocket.Server({ server });

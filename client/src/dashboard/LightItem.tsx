@@ -32,13 +32,13 @@ interface LightItemProps {
     }
   
     on(){
-      fetch(`/lights/${this.props.light.id}`)
+      fetch(`/api/lights/${this.props.light.id}`)
       .then(response => response.json())
       .then(data => console.log(data))
     }
   
     up(){
-      fetch(`/lights/${this.props.light.id}/position`,{
+      fetch(`/api/lights/${this.props.light.id}/position`,{
         method: "POST",
         headers: {
           "content-type": "application/json"
@@ -56,7 +56,7 @@ interface LightItemProps {
   
     }
     down(){
-      fetch(`/lights/${this.props.light.id}/position`,{
+      fetch(`/api/lights/${this.props.light.id}/position`,{
         method: "POST",
         headers: {
           "content-type": "application/json"
@@ -74,7 +74,7 @@ interface LightItemProps {
     }
   
     lightColor(color:any){
-      fetch(`/display/all`,{
+      fetch(`/api/display/all`,{
         method: "POST",
         headers: {
           "content-type": "application/json"
@@ -104,7 +104,7 @@ interface LightItemProps {
     }
   
     restart(){
-      fetch(`/lights/${this.props.light.id}/restart`, {
+      fetch(`/api/lights/${this.props.light.id}/restart`, {
         method: "POST",
         headers: {
           "content-type": "application/json"
@@ -119,7 +119,7 @@ interface LightItemProps {
     }
     
     upgrade(){
-      fetch(`/lights/${this.props.light.id}/update`, {
+      fetch(`/api/lights/${this.props.light.id}/update`, {
         method: "POST",
         headers: {
           "content-type": "application/json"
@@ -134,7 +134,7 @@ interface LightItemProps {
     }
   
     deleteLight(){
-      fetch(`/lights/${this.props.light.id}/delete`,{
+      fetch(`/api/lights/${this.props.light.id}/delete`,{
           method: "POST",
           headers: {
               "content-type": "application/json",

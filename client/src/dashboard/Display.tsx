@@ -16,7 +16,7 @@ export default class Display extends React.Component <DisplayProps, {}> {
     let colors:string[] = this.props.lights.map((light:Light)=>{
       return color
     });
-    let response = await fetch(`/display/color`,{
+    let response = await fetch(`/api/display/color`,{
       method: "POST",
       headers: {
         "content-type": "application/json"

@@ -43,7 +43,7 @@ class App extends React.Component <AppProps, AppState>{
   }
 
   connect(){
-    var client = new W3CWebSocket(`ws://${window.location.hostname}/lights`);
+    var client = new W3CWebSocket(`ws://${window.location.hostname}/api/lights`);
     var connectInterval:any;
     var that = this;
     client.onopen = () => {
