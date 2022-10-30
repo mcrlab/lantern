@@ -182,9 +182,6 @@ interface LightItemProps {
               <AlertDialog title={"Update Light"} body={"Do you want to update the firmware for light "+this.props.light.id} confirmCB={this.upgrade}>
               <SystemUpdateAltIcon />
               </AlertDialog>
-              <ConfigForm title={"Light Config"} light={this.props.light} confirmCB={()=>{}}>
-                <SystemUpdateAltIcon />
-              </ConfigForm>
               <AlertDialog title={"Remove Light"} body={"Do you want to delete light "+this.props.light.id} confirmCB={this.deleteLight}>
                 <DeleteIcon />
               </AlertDialog>
@@ -194,3 +191,8 @@ interface LightItemProps {
     }
   }
   export default LightItem;
+  /*
+                <ConfigForm title={"Light Config"} light={this.props.light} confirmCB={()=>{}}>
+                <SystemUpdateAltIcon />
+              </ConfigForm>
+              */

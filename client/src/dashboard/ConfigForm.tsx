@@ -3,10 +3,14 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import Light from '../Light';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 interface ConfigFormProps {
     confirmCB: any,
@@ -31,7 +35,13 @@ export default function ConfigForm(props:ConfigFormProps) {
     setOpen(false);
 
   }
-
+  let rows:Array<React.ReactElement> = Object.keys(props.light.config).map((key:any)=>{
+    const value:any = props.light.config[key];
+    return (<TableRow>
+        <TableCell>{key}</TableCell>
+        <TableCell>{value.toString()}</TableCell>
+    </TableRow>)
+  });
   return (
     <React.Fragment>
 
@@ -48,9 +58,19 @@ export default function ConfigForm(props:ConfigFormProps) {
           {props.title}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+        <Table size="small">
+        <TableHead>
+        <TableRow>
+            <TableCell>Key</TableCell>
+            <TableCell>Value</TableCell>
+        </TableRow>
+        </TableHead>
+            <TableBody>
+            {rows}
+            </TableBody>
+        </Table>
 
-          </DialogContentText>
+     
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

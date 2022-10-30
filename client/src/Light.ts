@@ -1,4 +1,4 @@
-interface Config {
+export interface Config {
     VIEW_PIN: Number,
     NUMBER_OF_PIXELS: Number,
     RENDER_INTERVAL: Number,
@@ -19,6 +19,6 @@ interface Light {
     memory: Number,
     sleep: Number,
     lastUpdated: string,
-    config: Config
+    config: any
   }
   export default Light
