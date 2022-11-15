@@ -45,6 +45,7 @@ export default class Display extends React.Component <DisplayProps, DisplayState
         <Button onClick={()=>{this.color("FF0000")}}>Red</Button>
         <Button onClick={()=>{this.color("00FF00")}}>Green</Button>
         <Button onClick={()=>{this.color("0000FF")}}>Blue</Button>
+        <Button onClick={()=>{this.color("000000")}}>Off</Button>
         <Blink />
       </React.Fragment>
     );
