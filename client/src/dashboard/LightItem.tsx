@@ -6,12 +6,13 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import HighlightIcon from '@mui/icons-material/Highlight';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
+import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import { Buffer } from 'buffer';
 import Light from '../Light'
 import AlertDialog from './confirmation';
-import ConfigForm from './ConfigForm';
+import PositionForm from './PositionForm';
 
 
 interface LightItemProps {
@@ -174,7 +175,9 @@ interface LightItemProps {
               <IconButton aria-label="poke" onClick={this.poke}>
                 <HighlightIcon />
               </IconButton>
-
+              <PositionForm title={"Light Position"} light={this.props.light}>
+              <FmdGoodIcon />
+              </PositionForm>
               <AlertDialog title={"Restart Light"} body={"Do you want to restart light "+this.props.light.id} confirmCB={this.restart}>
               <RestartAltIcon />
               </AlertDialog>
@@ -191,8 +194,3 @@ interface LightItemProps {
     }
   }
   export default LightItem;
-  /*
-                <ConfigForm title={"Light Config"} light={this.props.light} confirmCB={()=>{}}>
-                <SystemUpdateAltIcon />
-              </ConfigForm>
-              */

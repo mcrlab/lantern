@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import * as React from 'react';
 import Light from '../Light';
+import Blink from './Blink';
 
 interface AnimationProps {
   lights: Light[]
@@ -97,7 +98,7 @@ export default class Animation extends React.Component <AnimationProps, Animatio
              </React.Fragment>
           ))}
           <Button onClick={this.addFrame}>Add</Button>
-          
+          <Blink />
       </React.Fragment>
     );
   }
