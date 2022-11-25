@@ -24,6 +24,12 @@ export default function PositionForm(props:PositionFormProps) {
   const handleClose = () => {
     setOpen(false);
   };
+  const handleKeyPress = (e:any) => {
+    if(e.key === "Enter"){
+        setPosition(parseInt(e.target.value));
+        confirm();
+    }
+  };
 
   const confirm = () => {
     fetch(`/api/lights/${props.light.id}/position`,{
@@ -59,7 +65,7 @@ export default function PositionForm(props:PositionFormProps) {
           {props.title}
         </DialogTitle>
         <DialogContent>
-        <TextField inputProps={{ inputMode: 'numeric', pattern: '[0-9]*'}}  type="number" defaultValue={position} onBlur={handle}/>
+        <TextField inputProps={{ inputMode: 'numeric', pattern: '[0-9]*'}}  type="number" defaultValue={position} onBlur={handle} onKeyPress={handleKeyPress} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
