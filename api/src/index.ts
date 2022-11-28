@@ -27,8 +27,8 @@ const start = async ()=> {
   const app = express();
   const broker = new MQTTBroker();
   const controller = new LightController(broker);
-  await broker.init("API_Dev", (a,b)=>controller.handleMessage(a,b) );
-  app.use(express.static("client/build"))
+  await broker.init("API_Dev", (topic:string, message:string)=>controller.handleMessage(topic, message) );
+
   app.use(morganMiddleware);
   app.use(helmet());
   app.use(express.json());

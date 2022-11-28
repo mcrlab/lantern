@@ -34,7 +34,7 @@ export class LightController {
                     await getRepository(Light).save(light);
                     this.callback("UPDATE_LIGHT", JSON.stringify(light));
                     Logger.debug(`Light ${light.address} registered`);
-                    } else {
+                } else {
                     const newLight = new Light();
                     newLight.name = "Light";
                     newLight.address = data.id;
@@ -48,7 +48,7 @@ export class LightController {
                     await getRepository(Light).save(newLight);
                     this.callback("ADD_LIGHT", JSON.stringify(newLight));
                     Logger.debug("New light created");
-                    }
+                }
                 return;
             case "ping":
                 if(light){

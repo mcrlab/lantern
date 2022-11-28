@@ -3,18 +3,12 @@ import {Request, Response} from 'express';
 import "reflect-metadata";
 import {getRepository} from "typeorm";
 import { Light } from "../entity/Light";
-import { LightInstruction } from "../entity/LightInstruction";
-import {Frame} from "../entity/Frame";
 import Logger from "../lib/logger";
 import MQTTBroker from "../lib/mqtt";
 import validateColor from "../validators/color_validator";
 
 function createDisplayRoutes(broker:MQTTBroker) {
     const frameRouter = express.Router()
-    .get('/', async (req: Request, res: Response) => {
-        const data = await getRepository(Frame).find();
-        res.json(data);
-    })
     .post('/', async (req, res) => {
         try {
             const colors = req.body.colors;
@@ -32,12 +26,7 @@ function createDisplayRoutes(broker:MQTTBroker) {
                 
                 if(lights[i]){
                     Logger.info(color);
-                    const instruction = new LightInstruction();
-                    instruction.light = lights[i];
-                    instruction.color = color;
-                    
-                    delete instruction.light;
-                    broker.publish(`color/${lights[i].address}`, JSON.stringify(instruction));
+                    broker.publish(`color/${lights[i].address}`, color);
                 
                 }
             });
@@ -55,11 +44,7 @@ function createDisplayRoutes(broker:MQTTBroker) {
             const lights = await getRepository(Light).find();
 
             lights.map(async (light: Light)=> {
-                const instruction = new LightInstruction();
-                instruction.light = light;
-                instruction.color = color;
-                delete instruction.light;
-                broker.publish(`color/${light.address}`, JSON.stringify(instruction))
+                broker.publish(`color/${light.address}`, color)
             });
 
             return res.json({});
@@ -76,22 +61,12 @@ function createDisplayRoutes(broker:MQTTBroker) {
                 validateColor(update.color);
             });
             const lights = await getRepository(Light).find();
-            let instructions:LightInstruction[] = [];
-
             updates.map(async (update:any, i:number)=> {
                 const light = lights.find((element)=> { return element.id === update.id});
                 if(light){
-                    const instruction = new LightInstruction();
-                    instruction.light = light;
-                    instruction.color = update.color;
-                    instructions.push(instruction);
-                    delete instruction.light;
-                    broker.publish(`color/${light.address}`, JSON.stringify(instruction));
+                    broker.publish(`color/${light.address}`, update.color);
                 }
             });
-
-
-
             return res.json({});
 
         } catch(error){

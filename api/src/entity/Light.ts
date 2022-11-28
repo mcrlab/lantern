@@ -1,5 +1,4 @@
 import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm";
-import { LightInstruction } from "./LightInstruction";
 
 @Entity()
 export class Light {
@@ -33,11 +32,5 @@ export class Light {
 
     @Column("json")
     config: {};
-
-    @OneToMany(() => LightInstruction, instruction => instruction.light,{
-        onDelete: "CASCADE"
-    })
-    instructions: LightInstruction[];
-
 
 }
