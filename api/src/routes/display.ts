@@ -17,7 +17,8 @@ function createDisplayRoutes(broker:MQTTBroker) {
                 order: {
                     x: "ASC",
                     id: "ASC"
-                }
+                },
+                cache: true
             });
             colors.map((color:string, index:number) => {
                 validateColor(color);
@@ -41,7 +42,7 @@ function createDisplayRoutes(broker:MQTTBroker) {
         try {
             const color = validateColor(req.body.color);
 
-            const lights = await getRepository(Light).find();
+            const lights = await getRepository(Light).find({cache: true});
 
             lights.map(async (light: Light)=> {
                 broker.publish(`color/${light.address}`, color)
@@ -60,7 +61,7 @@ function createDisplayRoutes(broker:MQTTBroker) {
             updates.map((update:any, index:number)=>{
                 validateColor(update.color);
             });
-            const lights = await getRepository(Light).find();
+            const lights = await getRepository(Light).find({cache: true});
             updates.map(async (update:any, i:number)=> {
                 const light = lights.find((element)=> { return element.id === update.id});
                 if(light){
