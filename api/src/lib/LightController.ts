@@ -22,10 +22,12 @@ export class LightController {
 
     async handleMessage (topic: string, message: string){
         const data = JSON.parse(message.toString());
-        const light = await getRepository(Light).findOne({"address":data.id});
+        let light = new Light();
 
         switch(topic){
+        
             case "register":
+                light = await getRepository(Light).findOne({"address":data.id});
                 if(light){ 
                     light.lastUpdated = new Date();
                     light.config = data.config || light.config;
@@ -51,6 +53,7 @@ export class LightController {
                 }
                 return;
             case "ping":
+                light = await getRepository(Light).findOne({"address":data.id});
                 if(light){
                     light.lastUpdated = new Date();
                     light.color = data.color;
@@ -58,6 +61,23 @@ export class LightController {
                     this.callback("UPDATE_LIGHT", JSON.stringify(light));
                     Logger.debug(`Light ${light.address} pinged`);
                     }
+            case "pong":
+                light = await getRepository(Light).findOne({"address":data});
+                if(!light){ 
+                    const newLight = new Light();
+                    newLight.name = "Light";
+                    newLight.address = data;
+                    newLight.color = "000000";
+                    newLight.platform = "unknown";
+                    newLight.x = 0;
+                    newLight.sleep = 0;
+                    newLight.config =  {};
+                    newLight.version = "-1";
+                    newLight.lastUpdated = new Date();
+                    await getRepository(Light).save(newLight);
+                    this.callback("ADD_LIGHT", JSON.stringify(newLight));
+                    Logger.debug("New light created");
+                }
             default:
             return;
         }
