@@ -21,12 +21,13 @@ export class LightController {
     }
 
     async handleMessage (topic: string, message: string){
-        const data = JSON.parse(message.toString());
+
         let light = new Light();
 
         switch(topic){
         
-            case "register":
+            case "register":        
+                let data = JSON.parse(message.toString());
                 light = await getRepository(Light).findOne({"address":data.id});
                 if(light){ 
                     light.lastUpdated = new Date();
@@ -53,16 +54,17 @@ export class LightController {
                 }
                 return;
             case "ping":
-                light = await getRepository(Light).findOne({"address":data.id});
+                let pingdata = JSON.parse(message.toString());
+                light = await getRepository(Light).findOne({"address":pingdata.id});
                 if(light){
                     light.lastUpdated = new Date();
-                    light.color = data.color;
+                    light.color = pingdata.color;
                     await getRepository(Light).save(light);
                     this.callback("UPDATE_LIGHT", JSON.stringify(light));
                     Logger.debug(`Light ${light.address} pinged`);
                     }
             case "pong":
-                light = await getRepository(Light).findOne({"address":data});
+                light = await getRepository(Light).findOne({"address":message.toString()});
                 if(!light){ 
                     const newLight = new Light();
                     newLight.name = "Light";
