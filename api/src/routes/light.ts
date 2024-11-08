@@ -19,19 +19,6 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
         });
         res.json(lights);
     })
-    .post("/config", async (req: Request, res: Response) => {
-        const config = req.body;
-        broker.publish('config', JSON.stringify(config));
-        res.json({});
-    })
-    .post("/restart", async (req: Request, res: Response) => {
-        broker.publish(`restart`, "{}");
-        res.json({});
-    })
-    .post("/update", async (req: Request, res: Response) => {
-        broker.publish(`update`, "{}")
-        res.json({});
-    })
     .get("/:lightID", async (req: Request, res: Response) => {
         const light = await getRepository(Light).findOne(req.params.lightID);
         if(light) {
@@ -48,34 +35,6 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
             res.send({});
         } catch (error){
             res.status(error.status|| 400).json(error);
-        }
-    })
-    .post("/:lightID/update", async (req: Request, res: Response) => {
-        try {
-            const lightId = parseInt(req.params.lightID, 10);
-            await controller.updateLightFirmware(lightId);
-            res.send({});
-        } catch (error){
-            res.status(error.status|| 400).json(error);
-        }
-    })
-    .post("/:lightID/restart", async (req: Request, res: Response) => {
-        try {
-            const lightId = parseInt(req.params.lightID, 10);
-            await controller.restartLight(lightId);
-            res.send({});
-        } catch (error){
-            res.status(error.status || 400).json(error);
-        }
-    })
-    .post("/:lightID/config", async (req: Request, res: Response) => {
-        try {
-            const lightId = parseInt(req.params.lightID, 10);
-            const config = req.body;
-            await controller.updateLightConfig(lightId, config);
-            res.send({})
-        } catch (error) {
-            res.status(error.status || 400).json(error);
         }
     })
     .post("/:lightID/delete", async (req: Request, res: Response) => {

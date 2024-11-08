@@ -120,16 +120,6 @@ export class LightController {
             throw new LightNotFoundError();
         }
     }
-    
-
-    async restartLight(lightId: number){
-        const light = await getRepository(Light).findOne(lightId);
-        if(light){
-            this.broker.publish(`restart/${light.address}`, "{}");
-        } else {
-            throw new LightNotFoundError();
-        }
-    }
 
     async updateLightPosition(lightId: number, x:number){
         Logger.debug("Update light position");
@@ -139,26 +129,6 @@ export class LightController {
             light.lastUpdated = new Date();
             await getRepository(Light).save(light);
             this.callback("UPDATE_LIGHT", JSON.stringify(light));
-        } else {
-            throw new LightNotFoundError();
-        }
-    }
-
-    async updateLightConfig(lightId: number, config: any){
-        const light = await getRepository(Light).findOne(lightId);
-        if(light){
-            this.broker.publish(`config/${light.address}`, JSON.stringify(config));
-            this.callback("UPDATE_LIGHT", JSON.stringify(light));
-        } else {
-            throw new LightNotFoundError();
-        }
-    }
-
-    async updateLightFirmware(lightId: number){
-        Logger.debug("Update light firmware");
-        const light = await getRepository(Light).findOne(lightId);
-        if(light){
-            this.broker.publish(`update/${light.address}`, "{}");
         } else {
             throw new LightNotFoundError();
         }
