@@ -5,7 +5,6 @@ import * as helmet        from "helmet";
 import {createConnection, getRepository} from "typeorm";
 import Logger from "./lib/logger";
 import morganMiddleware from "./config/morganMiddleWare";
-import mqttRouter from "./routes/mqtt";
 
 import * as http from 'http';
 import { WebSocket } from 'ws';
@@ -22,8 +21,7 @@ const start = async ()=> {
   const port = process.env.SERVER_PORT || '3001';
 
   await createConnection(); 
-
-
+  
   const app = express();
   const broker = new MQTTBroker();
   const controller = new LightController(broker);
@@ -33,7 +31,6 @@ const start = async ()=> {
   app.use(helmet());
   app.use(express.json());
 
-  app.use("/api/mqtt", mqttRouter);
   app.use("/api/lights", createLightRoutes(broker, controller));
   app.use("/api/display", createDisplayRoutes(broker));
 
