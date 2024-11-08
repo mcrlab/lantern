@@ -15,22 +15,10 @@ export class Light {
     @Column()
     color: string;
 
-    @Column()
-    version: string;
-
-    @Column()
-    platform: string;
-
     @Column({"type": "float"})
     x: number = 0.0;
 
     @Column()
-    sleep: number;
-
-    @Column()
     lastUpdated: Date;
-
-    @Column("json")
-    config: {};
 
 }
