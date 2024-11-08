@@ -168,8 +168,6 @@ interface LightItemProps {
                 <KeyboardArrowDownIcon />
               </IconButton>
               </TableCell>
-            <TableCell>{this.props.light.version}</TableCell>
-            <TableCell>{this.props.light.platform}</TableCell>
             <TableCell align="right">{new Date(this.props.light.lastUpdated).toLocaleTimeString('en-US')}</TableCell>
             <TableCell>
               <IconButton aria-label="poke" onClick={this.poke}>
@@ -178,13 +176,6 @@ interface LightItemProps {
               <PositionForm title={"Light Position"} light={this.props.light}>
               <FmdGoodIcon />
               </PositionForm>
-              <AlertDialog title={"Restart Light"} body={"Do you want to restart light "+this.props.light.id} confirmCB={this.restart}>
-              <RestartAltIcon />
-              </AlertDialog>
-
-              <AlertDialog title={"Update Light"} body={"Do you want to update the firmware for light "+this.props.light.id} confirmCB={this.upgrade}>
-              <SystemUpdateAltIcon />
-              </AlertDialog>
               <AlertDialog title={"Remove Light"} body={"Do you want to delete light "+this.props.light.id} confirmCB={this.deleteLight}>
                 <DeleteIcon />
               </AlertDialog>

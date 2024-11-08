@@ -25,7 +25,32 @@ export class LightController {
         let light = new Light();
 
         switch(topic){
-        
+            case "hello":
+                let id = message.toString();
+                light = await getRepository(Light).findOne({"address": id});
+                if(light){ 
+                    light.lastUpdated = new Date();
+                    light.config = light.config;
+                    light.version = "-1";
+                    await getRepository(Light).save(light);
+                    this.callback("UPDATE_LIGHT", JSON.stringify(light));
+                    Logger.debug(`Light ${light.address} registered`);
+                } else {
+                    const newLight = new Light();
+                    newLight.name = id;
+                    newLight.address = id;
+                    newLight.color = "000000";
+                    newLight.platform = "unknown";
+                    newLight.x = 0;
+                    newLight.sleep = 0;
+                    newLight.config =  {};
+                    newLight.version = "-1";
+                    newLight.lastUpdated = new Date();
+                    await getRepository(Light).save(newLight);
+                    this.callback("ADD_LIGHT", JSON.stringify(newLight));
+                    Logger.debug("New light created");
+                }
+                return;
             case "register":        
                 let data = JSON.parse(message.toString());
                 light = await getRepository(Light).findOne({"address":data.id});
