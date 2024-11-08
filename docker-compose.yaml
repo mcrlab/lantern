@@ -35,16 +35,16 @@ services:
 
   mqtt:
     hostname: mqtt
-    image: jameslinnegartw/lantern
-    depends_on:
-        - postgres
-    restart: always
-    volumes:
-      - ./mqtt/conf:/etc/mosquitto
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
     ports:
-      - 1883:1883
+      - "1883:1883"
+    volumes:
+      - ./mosquitto:/etc/mosquitto
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
     networks:
-      - lantern-network 
+      - lantern-network
 
   postgres:
     image: postgres:10.4

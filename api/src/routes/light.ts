@@ -4,9 +4,7 @@ import "reflect-metadata";
 import { getRepository } from "typeorm";
 import { Light } from "../entity/Light";
 import MQTTBroker from "../lib/mqtt";
-
 import { LightController } from "../lib/LightController";
-
 
 function createLightRoutes(broker: MQTTBroker, controller: LightController){
     const lightRouter = express.Router()
