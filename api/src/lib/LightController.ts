@@ -45,25 +45,6 @@ export class LightController {
                     Logger.debug("New light created");
                 }
                 return;
-            case "register":        
-                let data = JSON.parse(message.toString());
-                light = await getRepository(Light).findOne({"address":data.id});
-                if(light){ 
-                    light.lastUpdated = new Date();
-                    await getRepository(Light).save(light);
-                    this.callback("UPDATE_LIGHT", JSON.stringify(light));
-                    Logger.debug(`Light ${light.address} registered`);
-                } else {
-                    const newLight = new Light();
-                    newLight.name = "Light";
-                    newLight.address = data.id;
-                    newLight.color = "000000";
-                    newLight.lastUpdated = new Date();
-                    await getRepository(Light).save(newLight);
-                    this.callback("ADD_LIGHT", JSON.stringify(newLight));
-                    Logger.debug("New light created");
-                }
-                return;
             case "ping":
                 let pingdata = JSON.parse(message.toString());
                 light = await getRepository(Light).findOne({"address":pingdata.id});
@@ -74,21 +55,9 @@ export class LightController {
                     this.callback("UPDATE_LIGHT", JSON.stringify(light));
                     Logger.debug(`Light ${light.address} pinged`);
                     }
-            case "pong":
-                light = await getRepository(Light).findOne({"address":message.toString()});
-                if(!light){ 
-                    const newLight = new Light();
-                    newLight.name = "Light";
-                    newLight.address = data;
-                    newLight.color = "000000";
-                    newLight.x = 0;
-                    newLight.lastUpdated = new Date();
-                    await getRepository(Light).save(newLight);
-                    this.callback("ADD_LIGHT", JSON.stringify(newLight));
-                    Logger.debug("New light created");
-                }
+                return;
             default:
-            return;
+                return;
         }
 
     }

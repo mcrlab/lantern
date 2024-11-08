@@ -19,9 +19,7 @@ export default class MQTTBroker {
     this.client.on('connect', () => {
       Logger.info("Connected to MQTT broker");
       this.client.subscribe('hello');
-      this.client.subscribe('register');
       this.client.subscribe('ping');
-      this.client.subscribe('pong');
     });
 
     this.client.on('message', (topic: string, message: string) => {
