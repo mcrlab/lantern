@@ -59,16 +59,6 @@ function createLightRoutes(broker: MQTTBroker, controller: LightController){
             res.status(error.status|| 400).json(error);
         }
     })
-    .post("/:lightID/sleep", async (req: Request, res: Response) => {
-        try {
-            const lightId = parseInt(req.params.lightID, 10);
-            const seconds = parseInt(req.body.seconds, 10);
-            await controller.sleepLight(lightId, seconds);
-            res.send({});
-        } catch (error){
-            res.status(error.status || 400).json(error);
-        }
-    })
     .post("/:lightID/restart", async (req: Request, res: Response) => {
         try {
             const lightId = parseInt(req.params.lightID, 10);

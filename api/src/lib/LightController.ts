@@ -121,21 +121,6 @@ export class LightController {
         }
     }
     
-    async sleepLight(lightId: number, seconds: number){
-        const light = await getRepository(Light).findOne(lightId);
-        if(light){
-            light.sleep = seconds;
-            await getRepository(Light).save(light);
-            const data = {
-                "seconds": seconds
-            }
-            this.broker.publish(`sleep/${light.address}`,JSON.stringify(data));
-            this.callback("UPDATE_LIGHT", JSON.stringify(light));
-
-        } else {
-            throw new LightNotFoundError();
-        }
-    }
 
     async restartLight(lightId: number){
         const light = await getRepository(Light).findOne(lightId);
