@@ -1,29 +1,39 @@
-import * as express from "express";
-import {Request, Response} from 'express';
+import {Request, Response, Router} from 'express';
 import "reflect-metadata";
-import { getRepository } from "typeorm";
+import { AppDataSource } from "../data-source";
 import { Light } from "../entity/Light";
+import Logger from "../lib/logger";
 import MQTTBroker from "../lib/mqtt";
 import { LightController } from "../lib/LightController";
 
-function createLightRoutes(broker: MQTTBroker, controller: LightController){
-    const lightRouter = express.Router()
+function createLightRoutes(broker:MQTTBroker, controller: LightController){
+    const lightRouter = Router()
     .get('/', async (req: Request, res: Response) => {
-        const lights = await getRepository(Light).find( {
+        const lights = await AppDataSource.getRepository(Light).find( {
             order: {
               x: "ASC",
               id: "ASC"
             }
-        });
+    });
         res.json(lights);
     })
     .get("/:lightID", async (req: Request, res: Response) => {
-        const light = await getRepository(Light).findOne(req.params.lightID);
+        const light = await AppDataSource.getRepository(Light).findOne({ where: { "id" : Number(req.params.lightID)}
+         });
         if(light) {
             res.json(light);
         } else {
             res.status(404).json("Light not found");
         }
+    })
+    .post("/:lightID", async (req: Request, res: Response) => {
+        const light = await AppDataSource.getRepository(Light).findOne({ where: { "id" : Number(req.params.lightID)}
+        });
+        if(light) {
+            res.json(light);
+        } else {
+            res.status(404).json("Light not found");
+        }   
     })
     .post("/:lightID/position", async(req: Request, res: Response) => {
         const lightId = parseInt(req.params.lightID, 10);

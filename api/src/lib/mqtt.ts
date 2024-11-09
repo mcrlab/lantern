@@ -1,4 +1,4 @@
-import * as mqtt from 'mqtt';
+import {connect, MqttClient}  from 'mqtt';
 import * as dotenv        from "dotenv";
 import Logger from "./logger";
 
@@ -6,7 +6,7 @@ dotenv.config();
 
 export default class MQTTBroker {
     clientId: string;
-    client: mqtt.Client;
+    client: MqttClient;
 
   constructor(){}
 
@@ -14,7 +14,7 @@ export default class MQTTBroker {
     
     const url = process.env.MQTT_URL;
     this.clientId = clientId;
-    this.client  = mqtt.connect(url, {"clientId": this.clientId});
+    this.client  = connect(url, {"clientId": this.clientId});
 
     this.client.on('connect', () => {
       Logger.info("Connected to MQTT broker");
@@ -22,7 +22,7 @@ export default class MQTTBroker {
       this.client.subscribe('ping');
     });
 
-    this.client.on('message', (topic: string, message: string) => {
+    this.client.on('message', (topic: any, message: any) => {
       Logger.debug(`Message recieved ${topic} ${message}`);
       callback(topic, message);
     });

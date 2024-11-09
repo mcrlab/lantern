@@ -1,5 +1,6 @@
 import LightNotFoundError from "../exceptions/LightNotFoundError";
-import { getRepository } from "typeorm";
+//import { getRepository } from "typeorm";
+import { AppDataSource } from "../data-source";
 import { Light } from "../entity/Light";
 import Logger from "./logger";
 import MQTTBroker from "./mqtt";
@@ -27,10 +28,10 @@ export class LightController {
         switch(topic){
             case "hello":
                 let id = message.toString();
-                light = await getRepository(Light).findOne({"address": id});
+                light = await AppDataSource.getRepository(Light).findOne({where:{"address": id}});
                 if(light){ 
                     light.lastUpdated = new Date();
-                    await getRepository(Light).save(light);
+                    await AppDataSource.getRepository(Light).save(light);
                     this.callback("UPDATE_LIGHT", JSON.stringify(light));
                     Logger.debug(`Light ${light.address} registered`);
                 } else {
@@ -40,18 +41,18 @@ export class LightController {
                     newLight.color = "000000";
                     newLight.x = 0;
                     newLight.lastUpdated = new Date();
-                    await getRepository(Light).save(newLight);
+                    await AppDataSource.getRepository(Light).save(newLight);
                     this.callback("ADD_LIGHT", JSON.stringify(newLight));
                     Logger.debug("New light created");
                 }
                 return;
             case "ping":
                 let pingdata = JSON.parse(message.toString());
-                light = await getRepository(Light).findOne({"address":pingdata.id});
+                light = await AppDataSource.getRepository(Light).findOne({where:{"address":pingdata.id}});
                 if(light){
                     light.lastUpdated = new Date();
                     light.color = pingdata.color;
-                    await getRepository(Light).save(light);
+                    await AppDataSource.getRepository(Light).save(light);
                     this.callback("UPDATE_LIGHT", JSON.stringify(light));
                     Logger.debug(`Light ${light.address} pinged`);
                     }
@@ -63,9 +64,11 @@ export class LightController {
     }
 
     async removeLight(lightId: number){
-        const light = await getRepository(Light).findOne(lightId);
+        const light = await AppDataSource.getRepository(Light).findOne({
+            where: {id:lightId}
+        });
         if(light){
-            await getRepository(Light).remove(light);
+            await AppDataSource.getRepository(Light).remove(light);
             this.callback("REMOVE_LIGHT", JSON.stringify(light));
         } else {
             throw new LightNotFoundError();
@@ -74,11 +77,13 @@ export class LightController {
 
     async updateLightPosition(lightId: number, x:number){
         Logger.debug("Update light position");
-        const light = await getRepository(Light).findOne(lightId);
+        const light = await AppDataSource.getRepository(Light).findOne({
+            where: {id:lightId}
+        });
         if(light){
             light.x = x || 0;
             light.lastUpdated = new Date();
-            await getRepository(Light).save(light);
+            await AppDataSource.getRepository(Light).save(light);
             this.callback("UPDATE_LIGHT", JSON.stringify(light));
         } else {
             throw new LightNotFoundError();

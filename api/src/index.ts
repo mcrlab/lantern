@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import * as dotenv        from "dotenv";
 import * as express       from "express";
-import * as helmet        from "helmet";
-import {createConnection, getRepository} from "typeorm";
+import Helmet from "helmet";
+import { AppDataSource } from "./data-source";
 import Logger from "./lib/logger";
 import morganMiddleware from "./config/morganMiddleWare";
 
@@ -19,16 +19,15 @@ import MQTTBroker from "./lib/mqtt";
 const start = async ()=> {
   dotenv.config();
   const port = process.env.SERVER_PORT || '3001';
+  await AppDataSource.initialize()
 
-  await createConnection(); 
-  
   const app = express();
   const broker = new MQTTBroker();
   const controller = new LightController(broker);
   await broker.init("API_Dev", (topic:string, message:string)=>controller.handleMessage(topic, message) );
 
   app.use(morganMiddleware);
-  app.use(helmet());
+  app.use(Helmet());
   app.use(express.json());
 
   app.use("/api/lights", createLightRoutes(broker, controller));
@@ -38,7 +37,7 @@ const start = async ()=> {
   const wss = new WebSocket.Server({ server });
 
   wss.on('connection', async (ws) => {
-    const data = await getRepository(Light).find( {
+    const data = await AppDataSource.getRepository(Light).find( {
       order: {
         x: "ASC",
         id: "ASC"
