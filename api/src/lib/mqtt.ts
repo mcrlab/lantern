@@ -1,14 +1,17 @@
 import {connect, MqttClient}  from 'mqtt';
 import * as dotenv        from "dotenv";
 import Logger from "./logger";
+import Broker from './Broker';
 
 dotenv.config();
 
-export default class MQTTBroker {
+export default class MQTTBroker extends Broker{
     clientId: string;
     client: MqttClient;
 
-  constructor(){}
+  constructor(){
+    super()
+  }
 
   async init(clientId: string, callback: any) {
     
@@ -19,7 +22,6 @@ export default class MQTTBroker {
     this.client.on('connect', () => {
       Logger.info("Connected to MQTT broker");
       this.client.subscribe('hello');
-      this.client.subscribe('ping');
     });
 
     this.client.on('message', (topic: any, message: any) => {
@@ -43,7 +45,6 @@ export default class MQTTBroker {
         .on('error', (error) => {
             Logger.error('MQTT Error', error);
         });
-
   }
 
   publish(address: string, message: string) {

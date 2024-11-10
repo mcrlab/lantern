@@ -3,10 +3,10 @@ import "reflect-metadata";
 import { AppDataSource } from "../data-source";
 import { Light } from "../entity/Light";
 import Logger from "../lib/logger";
-import MQTTBroker from "../lib/mqtt";
 import validateColor from "../validators/color_validator";
+import Broker from '../lib/Broker';
 
-function createDisplayRoutes(broker:MQTTBroker) {
+function createDisplayRoutes(broker:Broker) {
     const displayRouter = Router();
     displayRouter.post('/color', async (req: Request, res: Response) => {
         const color = validateColor(req.body.color);

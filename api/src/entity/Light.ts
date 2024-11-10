@@ -10,9 +10,6 @@ export class Light {
     address: string;
 
     @Column()
-    name: string;
-
-    @Column()
     color: string;
 
     @Column({"type": "float"})

@@ -14,7 +14,7 @@ import { LightController } from "./lib/LightController";
 import createLightRoutes from "./routes/light";
 import createDisplayRoutes from "./routes/display";
 import MQTTBroker from "./lib/mqtt";
-
+import UDPBroker from "./lib/udp";
 
 const start = async ()=> {
   dotenv.config();
@@ -23,14 +23,17 @@ const start = async ()=> {
 
   const app = express();
   const broker = new MQTTBroker();
+  const udpBroker = new UDPBroker();
+
   const controller = new LightController(broker);
   await broker.init("API_Dev", (topic:string, message:string)=>controller.handleMessage(topic, message) );
+  await udpBroker.init("udp", (topic:string, message:string)=>controller.handleMessage(topic, message) );
 
   app.use(morganMiddleware);
   app.use(Helmet());
   app.use(express.json());
 
-  app.use("/api/lights", createLightRoutes(broker, controller));
+  app.use("/api/lights", createLightRoutes(controller));
   app.use("/api/display", createDisplayRoutes(broker));
 
   const server = http.createServer(app);

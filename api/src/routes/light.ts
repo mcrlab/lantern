@@ -2,11 +2,10 @@ import {Request, Response, Router} from 'express';
 import "reflect-metadata";
 import { AppDataSource } from "../data-source";
 import { Light } from "../entity/Light";
-import Logger from "../lib/logger";
-import MQTTBroker from "../lib/mqtt";
 import { LightController } from "../lib/LightController";
 
-function createLightRoutes(broker:MQTTBroker, controller: LightController){
+
+function createLightRoutes(controller: LightController){
     const lightRouter = Router()
     .get('/', async (req: Request, res: Response) => {
         const lights = await AppDataSource.getRepository(Light).find( {

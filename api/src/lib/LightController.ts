@@ -36,7 +36,6 @@ export class LightController {
                     Logger.debug(`Light ${light.address} registered`);
                 } else {
                     const newLight = new Light();
-                    newLight.name = id;
                     newLight.address = id;
                     newLight.color = "000000";
                     newLight.x = 0;
@@ -45,17 +44,6 @@ export class LightController {
                     this.callback("ADD_LIGHT", JSON.stringify(newLight));
                     Logger.debug("New light created");
                 }
-                return;
-            case "ping":
-                let pingdata = JSON.parse(message.toString());
-                light = await AppDataSource.getRepository(Light).findOne({where:{"address":pingdata.id}});
-                if(light){
-                    light.lastUpdated = new Date();
-                    light.color = pingdata.color;
-                    await AppDataSource.getRepository(Light).save(light);
-                    this.callback("UPDATE_LIGHT", JSON.stringify(light));
-                    Logger.debug(`Light ${light.address} pinged`);
-                    }
                 return;
             default:
                 return;
