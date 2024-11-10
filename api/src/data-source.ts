@@ -1,6 +1,5 @@
 import { DataSource } from "typeorm"
 import { Light } from "./entity/Light";
-import { Color } from "./entity/Color";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -10,6 +9,7 @@ export const AppDataSource = new DataSource({
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     entities: [
-        Light, Color
+        Light
     ],
+    synchronize: true
 })

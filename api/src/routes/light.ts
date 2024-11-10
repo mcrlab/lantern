@@ -3,7 +3,9 @@ import "reflect-metadata";
 import { AppDataSource } from "../data-source";
 import { Light } from "../entity/Light";
 import { LightController } from "../lib/LightController";
-
+import validateColor from "../validators/color_validator";
+import LightNotFoundError from '../exceptions/LightNotFoundError';
+import InvalidColorError from '../exceptions/InvalidColourError';
 
 function createLightRoutes(controller: LightController){
     const lightRouter = Router()
@@ -26,13 +28,18 @@ function createLightRoutes(controller: LightController){
         }
     })
     .post("/:lightID", async (req: Request, res: Response) => {
-        const light = await AppDataSource.getRepository(Light).findOne({ where: { "id" : Number(req.params.lightID)}
-        });
-        if(light) {
-            res.json(light);
-        } else {
-            res.status(404).json("Light not found");
-        }   
+        try {
+            const color = validateColor(req.body.color);
+            controller.setLightColor( Number(req.params.lightID), color)
+            res.json({});
+        } catch (e) {
+            if (e instanceof LightNotFoundError) {
+                res.status(404).json("Light not found");
+            }
+            if (e instanceof InvalidColorError) {           
+                res.status(300).json("Invalid colour");
+            }
+        }
     })
     .post("/:lightID/position", async(req: Request, res: Response) => {
         const lightId = parseInt(req.params.lightID, 10);

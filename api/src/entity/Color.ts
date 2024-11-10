@@ -2,7 +2,7 @@
 
 import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
-@Entity()
+@Entity({ name: 'color' })
 export class Color {
 
     @PrimaryGeneratedColumn()

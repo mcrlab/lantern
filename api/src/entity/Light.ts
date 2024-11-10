@@ -1,6 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, Column, OneToMany} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
-@Entity()
+@Entity({ name: 'light' })
 export class Light {
 
     @PrimaryGeneratedColumn()

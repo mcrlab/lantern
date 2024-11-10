@@ -25,16 +25,17 @@ const start = async ()=> {
   const broker = new MQTTBroker();
   const udpBroker = new UDPBroker();
 
-  const controller = new LightController(broker);
+  const controller = new LightController(udpBroker);
+
   await broker.init("API_Dev", (topic:string, message:string)=>controller.handleMessage(topic, message) );
-  await udpBroker.init("udp", (topic:string, message:string)=>controller.handleMessage(topic, message) );
+  udpBroker.init("udp", (topic:string, message:string)=>controller.handleMessage(topic, message) );
 
   app.use(morganMiddleware);
   app.use(Helmet());
   app.use(express.json());
 
   app.use("/api/lights", createLightRoutes(controller));
-  app.use("/api/display", createDisplayRoutes(broker));
+  app.use("/api/display", createDisplayRoutes(controller));
 
   const server = http.createServer(app);
   const wss = new WebSocket.Server({ server });

@@ -20,7 +20,7 @@ export default class MQTTBroker extends Broker{
     this.client  = connect(url, {"clientId": this.clientId});
 
     this.client.on('connect', () => {
-      Logger.info("Connected to MQTT broker");
+      Logger.debug("Connected to MQTT broker");
       this.client.subscribe('hello');
     });
 
@@ -49,7 +49,7 @@ export default class MQTTBroker extends Broker{
 
   publish(address: string, message: string) {
     Logger.debug(`${address} ${message}`);
-    this.client.publish(address, message);
+    this.client.publish(`color/${address}`, message);
   }
 
 }

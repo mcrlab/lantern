@@ -22,8 +22,8 @@ export default class UDPBroker extends Broker{
     // emits on new datagram msg
     this.client.on('message',(msg: string, info: any) => {
       Logger.debug('Data received from client : ' + msg.toString());
-      Logger.debug('Received %d bytes from %s:%d\n',msg.length, info.address, info.port);
-      callback("hello", info.address);
+      Logger.debug(`Received ${msg.length} bytes from ${info.address}:${info.port}\n`);
+      callback("hello", info.address + ":" + info.port);
     });
 
     //emits when socket is ready and listening for datagram msgs
@@ -40,20 +40,24 @@ export default class UDPBroker extends Broker{
     this.client.on('close',()=>{
       Logger.debug('Socket is closed !');
     });
+
     this.client.bind(9999);
 
   }
 
   publish(address: string, message: string){
-    let buf1 = Buffer.alloc(3);
+    let buf = Buffer.alloc(3);
     let color = hex2rgb(message);
 
-    buf1 = color['r'];
-    buf1 = color['g'];
-    buf1 = color['b'];
+    buf[0] = color['r'];
+    buf[1] = color['g'];
+    buf[2] = color['b'];
 
-    this.client.send(buf1, 9999, address, (error) => {
+    let data = address.split(":");
+    Logger.warn(`sending to ${address} this ${color}`)
+    this.client.send(buf, Number(data[1]), data[0], (error) => {
         if(error){
+          Logger.warn("error!!!");
             //this.client.close();
         }
     });
