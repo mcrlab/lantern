@@ -35,7 +35,7 @@ export class LightController {
                     light.lastUpdated = new Date();
                     await AppDataSource.getRepository(Light).save(light);
                     this.callback("UPDATE_LIGHT", JSON.stringify(light));
-                    Logger.debug(`Light ${light.address} registered`);
+                    Logger.debug(`Light ${light.address} updated`);
                 } else {
                     const newLight = new Light();
                     newLight.address = id;
@@ -44,7 +44,7 @@ export class LightController {
                     newLight.lastUpdated = new Date();
                     await AppDataSource.getRepository(Light).save(newLight);
                     this.callback("ADD_LIGHT", JSON.stringify(newLight));
-                    Logger.debug("New light created");
+                    Logger.debug(`New light ${newLight.address} registered`);
                 }
                 return;
             default:

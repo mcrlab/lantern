@@ -12,13 +12,7 @@ interface Light {
     y: Number,
     id: number,
     address: String,
-    name: String,
     color: String,
-    version: String,
-    platform: String,
-    memory: Number,
-    sleep: Number,
     lastUpdated: string,
-    config: any
   }
   export default Light

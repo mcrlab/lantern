@@ -22,13 +22,13 @@ const start = async ()=> {
   await AppDataSource.initialize()
 
   const app = express();
-  const broker = new MQTTBroker();
+  const mqttBroker = new MQTTBroker();
   const udpBroker = new UDPBroker();
 
-  const controller = new LightController(udpBroker);
+  const controller = new LightController(mqttBroker);
 
-  await broker.init("API_Dev", (topic:string, message:string)=>controller.handleMessage(topic, message) );
-  udpBroker.init("udp", (topic:string, message:string)=>controller.handleMessage(topic, message) );
+  await mqttBroker.init("API_Dev", (topic:string, message:string)=>controller.handleMessage(topic, message) );
+  //udpBroker.init("udp", (topic:string, message:string)=>controller.handleMessage(topic, message) );
 
   app.use(morganMiddleware);
   app.use(Helmet());

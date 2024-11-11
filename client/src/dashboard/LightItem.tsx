@@ -4,8 +4,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import HighlightIcon from '@mui/icons-material/Highlight';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import SystemUpdateAltIcon from '@mui/icons-material/SystemUpdateAlt';
 import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -25,8 +23,6 @@ interface LightItemProps {
       this.on = this.on.bind(this);
       this.deleteLight = this.deleteLight.bind(this);
       this.poke = this.poke.bind(this);
-      this.restart = this.restart.bind(this);
-      this.upgrade = this.upgrade.bind(this);
       this.up = this.up.bind(this);
       this.down = this.down.bind(this);
   
@@ -96,6 +92,7 @@ interface LightItemProps {
         console.log(json)
       });
     }
+
     poke(){
      this.lightColor("FF0000")
      setTimeout(()=>{
@@ -104,35 +101,6 @@ interface LightItemProps {
      1500);
     }
   
-    restart(){
-      fetch(`/api/lights/${this.props.light.id}/restart`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json"
-        }
-      })
-      .then(response => {
-        response.json()
-      })
-      .then(json => {
-        console.log(json);
-      })
-    }
-    
-    upgrade(){
-      fetch(`/api/lights/${this.props.light.id}/update`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json"
-        }
-      })
-      .then(response => {
-        response.json()
-      })
-      .then(json => {
-        console.log(json);
-      })
-    }
   
     deleteLight(){
       fetch(`/api/lights/${this.props.light.id}/delete`,{

@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   client:
     container_name: client
@@ -20,12 +18,11 @@ services:
       - lantern-network 
     ports:
       - 8080:8080
+      - "9999:9999/udp"
     restart: always
     environment:
       MQTT_URL: "mqtt://lantern:ilovelamp@mqtt:1883"
       SERVER_PORT: 8080
-      ANIMATION_OFFSET: ${ANIMATION_OFFSET}
-      SYNC_INTERVAL: ${SYNC_INTERVAL}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_USER: ${POSTGRES_USER}
