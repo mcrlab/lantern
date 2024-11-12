@@ -66,8 +66,8 @@ export class LightController {
             where: {id:lightId}
         });
         if(light){
-            light.color = color;
-            await AppDataSource.getRepository(Light).save(light);
+            //light.color = color;
+            //await AppDataSource.getRepository(Light).save(light);
             this.broker.publish(light.address, color)
             this.callback("UPDATE_LIGHT", JSON.stringify(light));
         } else {

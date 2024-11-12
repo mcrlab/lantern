@@ -16,7 +16,7 @@ function createDisplayRoutes(controller:LightController) {
             res.json({});
         } catch (e) {
             if(e instanceof InvalidColorError) {
-                res.status(300).json("Invalid colour");
+                res.status(340).json("Invalid colour");
             }
         }
     });
@@ -32,7 +32,7 @@ function createDisplayRoutes(controller:LightController) {
         } catch(error){
             if(error instanceof InvalidColorError) {
                 Logger.error(error);
-                res.status(300).json("invalid color");
+                res.status(400).json("invalid color");
             }
             if (error instanceof LightNotFoundError) {
                 res.status(404).json("Light not found");

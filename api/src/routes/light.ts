@@ -6,6 +6,7 @@ import { LightController } from "../lib/LightController";
 import validateColor from "../validators/color_validator";
 import LightNotFoundError from '../exceptions/LightNotFoundError';
 import InvalidColorError from '../exceptions/InvalidColourError';
+import Logger from '../lib/logger';
 
 function createLightRoutes(controller: LightController){
     const lightRouter = Router()
@@ -28,17 +29,13 @@ function createLightRoutes(controller: LightController){
         }
     })
     .post("/:lightID", async (req: Request, res: Response) => {
+        const lightId = parseInt(req.params.lightID, 10);
         try {
             const color = validateColor(req.body.color);
-            controller.setLightColor( Number(req.params.lightID), color)
-            res.json({});
-        } catch (e) {
-            if (e instanceof LightNotFoundError) {
-                res.status(404).json("Light not found");
-            }
-            if (e instanceof InvalidColorError) {           
-                res.status(300).json("Invalid colour");
-            }
+            await controller.setLightColor( lightId, color)
+            res.send({});
+        } catch (error){
+            res.status(error.status || 400).json(error);
         }
     })
     .post("/:lightID/position", async(req: Request, res: Response) => {
