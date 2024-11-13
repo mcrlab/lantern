@@ -57,7 +57,11 @@ export class LightController {
         const lights = await AppDataSource.getRepository(Light).find({cache: true});
 
         lights.map(async (light: Light)=> {
+            light.color = color;
+            light.lastUpdated = new Date();
+            await AppDataSource.getRepository(Light).save(light);
             this.broker.publish(light.address, color)
+            this.callback("UPDATE_LIGHT", JSON.stringify(light));
         });
 
     }
@@ -66,8 +70,9 @@ export class LightController {
             where: {id:lightId}
         });
         if(light){
-            //light.color = color;
-            //await AppDataSource.getRepository(Light).save(light);
+            light.color = color;
+            light.lastUpdated = new Date();
+            await AppDataSource.getRepository(Light).save(light);
             this.broker.publish(light.address, color)
             this.callback("UPDATE_LIGHT", JSON.stringify(light));
         } else {

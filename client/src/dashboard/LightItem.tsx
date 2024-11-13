@@ -11,7 +11,7 @@ import { Buffer } from 'buffer';
 import Light from '../Light'
 import AlertDialog from './confirmation';
 import PositionForm from './PositionForm';
-
+import Color from './Colour';
 
 interface LightItemProps {
     light: Light
@@ -71,18 +71,13 @@ interface LightItemProps {
     }
   
     lightColor(color:any){
-      fetch(`/api/display/all`,{
+      fetch(`/api/lights/${this.props.light.id}`,{
         method: "POST",
         headers: {
           "content-type": "application/json"
         },
         body: JSON.stringify({
-            "lights": [
-                {
-                    "id":this.props.light.id,
-                    "color": color
-                }
-            ]
+          "color": color
         })
       })
       .then(response => {
@@ -136,6 +131,7 @@ interface LightItemProps {
                 <KeyboardArrowDownIcon />
               </IconButton>
               </TableCell>
+              <TableCell align="right"><Color color={this.props.light.color}></Color></TableCell>
             <TableCell align="right">{new Date(this.props.light.lastUpdated).toLocaleTimeString('en-US')}</TableCell>
             <TableCell>
               <IconButton aria-label="poke" onClick={this.poke}>

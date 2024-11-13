@@ -2,7 +2,6 @@ import {Request, Response, Router} from 'express';
 import "reflect-metadata";
 import Logger from "../lib/logger";
 import validateColor from "../validators/color_validator";
-import Broker from '../lib/Broker';
 import InvalidColorError from '../exceptions/InvalidColourError';
 import { LightController } from '../lib/LightController';
 import LightNotFoundError from '../exceptions/LightNotFoundError';
@@ -16,7 +15,7 @@ function createDisplayRoutes(controller:LightController) {
             res.json({});
         } catch (e) {
             if(e instanceof InvalidColorError) {
-                res.status(340).json("Invalid colour");
+                res.status(400).json("Invalid colour");
             }
         }
     });

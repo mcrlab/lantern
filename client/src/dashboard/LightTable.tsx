@@ -19,6 +19,7 @@ export default function LightTable(props:LightArray) {
         <TableCell>ID</TableCell>
         <TableCell>Name</TableCell>
         <TableCell>Position</TableCell>
+        <TableCell>Color</TableCell>
         <TableCell align="right">Last Updated</TableCell>
         <TableCell></TableCell>
       </TableRow>
